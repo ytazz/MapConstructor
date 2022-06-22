@@ -6,6 +6,6 @@
     />
   <SaveWeightDistribution
     LoadFile="../data/after_Example.g2o"
-    SaveFile="../data/histgram_Example.csv"
+    SaveFile="../data/histogram_Example.csv"
     />
 </setting>
