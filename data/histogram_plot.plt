@@ -1,3 +1,2 @@
-load "gp_plot.txt"
-unset output
-unset terminal
+load "histogram_plot.txt"
+reset session
