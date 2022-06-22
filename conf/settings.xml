@@ -1,0 +1,11 @@
+<setting>
+  <OptProxPoseGraph
+    LoopNum="50"
+    LoadFile="../data/before_Example.g2o"
+    SaveFile="../data/after_Example.g2o"
+    />
+  <SaveWeightDistribution
+    LoadFile="../data/after_Example.g2o"
+    SaveFile="../data/histgram_Example.csv"
+    />
+</setting>
