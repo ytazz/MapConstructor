@@ -1,0 +1,69 @@
+OutputTerm = 3
+BaseName = "VPPWX"
+
+set encoding utf8
+if (OutputTerm  == 1){
+	set term pngcairo color size 1920, 1280 enhanced font ",18"
+	set output BaseName.".png"
+}
+if (OutputTerm  == 2){
+	set term postscript eps color size 4.5in, 3in enhanced font ",18"
+	set output BaseName.".eps"
+}
+if (OutputTerm  == 3){
+	set term svg size 1000,1000 font ",36"
+	set output BaseName.".svg"
+}
+
+FilterWidth = 0.01
+
+filter(x) = (ceil(x/FilterWidth)-0.5)*FilterWidth
+
+set style fill solid border lc rgb "#000000"
+set xlabel "s"
+set ylabel "frequency"
+set xrange [0:1]
+#set size ratio 0.2
+set boxwidth FilterWidth
+set key left top
+
+set multiplot layout 3,1
+
+set lmargin screen 0.18
+set rmargin screen 0.98
+set tmargin screen 0.90
+set bmargin screen 0.66
+set format x ""
+set xlabel "s"
+#set yrange [0:8000]
+#set ytics 4000
+set yrange [0:7000]
+set ytics 3500
+plot BaseName."_100.csv" u (filter($1)):(1.) smooth frequency \
+with boxes lc rgb "#FF00FF" lw 2 title "{/Symbol x} = 1.00"
+
+set tmargin screen 0.62
+set bmargin screen 0.38
+set format x ""
+set xlabel ""
+#set yrange [0:4000]
+#set ytics 2000
+set yrange [0:4000]
+set ytics 2000
+plot BaseName."_010.csv" u (filter($1)):(1.) smooth frequency \
+with boxes lc rgb "#00FFFF" lw 2 title "{/Symbol x} = 0.10"
+
+set tmargin screen 0.34
+set bmargin screen 0.1
+set format x
+set xlabel ""
+set yrange [0:4000]
+set ytics 2000
+#set yrange [0:2000]
+#set ytics 1000
+plot BaseName."_001.csv" u (filter($1)):(1.) smooth frequency \
+with boxes lc rgb "#FFFF00" lw 2 title "{/Symbol x} = 0.01"
+
+unset multiplot
+
+#replot
