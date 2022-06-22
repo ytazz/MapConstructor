@@ -12,27 +12,6 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-	//if (Generate_G2Ofile(argc, argv) == 0) {
-	//	cout << "wait for loop_closing" << endl;
-	//	cout << "if loop_closed then press any key to next process" << endl;
-	//	while (!_kbhit()); _getch();
-	//	if (Optimize_Proximity_PoseGraph(argc, argv) == 0) {
-	//		cout << "loop_closing was succeeded" << endl;
-	//		cout << "press any key to generate optimized location file" << endl;
-	//		while (!_kbhit()); _getch();
-	//		if (Generate_Locfile(argc, argv) == 0) {
-	//			cout << "press any key to end" << endl;
-	//			while (!_kbhit());
-	//			return 0;
-	//		}
-	//		return -1;
-	//	}
-	//	return -1;
-	//}
-	//return -1;
-	//Conv_Geo2Loc("data/nc2021_D_geo.csv", "data/nc2021_D_locgeo.csv", 58500, -123.0, vec3_t{ 34.660647, 135.446145, 5.084000 });
-	//Generate_G2Ofile(argc, argv);
-
 	Scenebuilder::XML setting;
 	try {
 		setting.Load("../conf/settings.xml");
