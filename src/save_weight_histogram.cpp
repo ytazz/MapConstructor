@@ -1,21 +1,14 @@
+#include "save_weight_histogram.h"
+
 #include <iostream>
 #include <iomanip>
-#include <fstream>
 #include <conio.h>
 #include <sstream>
 #include <time.h>
-#include <string.h>
-#include "save_weight_histogram.h"
 
-#include "sbconverter.h"
-#include "sbcsv.h"
-#include "sbxml.h"
+namespace MapConstructor {
 
-int Save_Weight_Histgram(Scenebuilder::XMLNode* setting) {
-	Scenebuilder::CsvReader ifcsv;
-	ofstream ofs;
-
-	string ifname, ofname;
+int SaveWeightHistgram::Task(Scenebuilder::XMLNode* setting) {
 	setting->Get<string>(ifname, ".LoadFile");
 	setting->Get<string>(ofname, ".SaveFile");
 	ifcsv.Read(ifname, " ");
@@ -34,4 +27,6 @@ int Save_Weight_Histgram(Scenebuilder::XMLNode* setting) {
 	ofs.close();
 
 	return 0;
+}
+
 }

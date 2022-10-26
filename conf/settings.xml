@@ -1,11 +1,79 @@
 <setting>
-  <OptProxPoseGraph
-    LoopNum="50"
-    LoadFile="../data/before_Example.g2o"
-    SaveFile="../data/after_Example.g2o"
+  <MapOptimizer
+    name     ="MainPGO"
+    LoopNum  ="0"
+    LoadFile ="../data/before_nc2021_V.g2o"
+    SaveFile ="../data/after_nc2021_V.g2o"
     />
-  <SaveWeightDistribution
-    LoadFile="../data/after_Example.g2o"
-    SaveFile="../data/histogram_Example.csv"
+  <!--
+  <MapOptimizer
+    name     ="MainPGO"
+    LoopNum  ="0"
+    LoadFile ="../data/before_ku2022_1.g2o"
+    SaveFile ="../data/after_ku2022_1.g2o"
     />
+    -->
+  <MapOptimizer
+    name     ="SubPGO"
+    LoopNum  ="0"
+    LoadFile ="../data/before_nc2022_C.g2o"
+    SaveFile ="../data/after_nc2022_C.g2o"
+    />
+  <SaveWeightHistgram
+    name     ="Histgram"
+    LoadFile ="../data/after_nc2021_X__50.g2o"
+    SaveFile ="../data/histogram_X__50.csv"
+    />
+  <GeoConverter
+    name     ="GeoConv"
+    rate     ="1"
+    LoadFile ="../data/nc2022_7_geo.csv"
+    SaveFile ="../data/nc2022_7_locgeo.csv"
+    OrigLLH  ="34.693111 135.504632 8.137000"
+    OrigAng  ="-180"
+    />
+  <ProxMatcher
+    name     ="ProxMatcher"
+    LoadFile ="../data/before_nc2021_W.g2o"
+    SaveFile ="../data/before_nc2021_T.g2o"
+    />
+  <MapConverter
+    name       ="Omnia_to_G2O"
+    LoadFormat ="Omnia"
+    SaveFormat ="G2O"
+    MapNum     ="1"
+    LocFile1   ="../data/ku2022_2_loc.csv"
+    ProxFile1  ="../data/ku2022_2_prox.csv"
+    MatchFile  ="../data/ku2022_2_match.csv"
+    G2OFile    ="../data/before_ku2022_3.g2o"
+    />
+  <MapConverter
+    name       ="G2O_to_Omnia"
+    LoadFormat ="G2O"
+    SaveFormat ="Omnia"
+    MapNum     ="1"
+    G2OFile    ="../data/after_ku2022_1.g2o"
+    LocFile1   ="../data/ku2022_1_locopt.csv"
+    />
+  <MapConverter
+    name         ="Omnia_to_AbsProx"
+    LoadFormat   ="Omnia"
+    SaveFormat   ="AbsProx"
+    MapNum       ="1"
+    LocFile1     ="../data/ku2022_1_locopt.csv"
+    ProxFile1    ="../data/ku2022_1_prox.csv"
+    AbsProxFile1 ="../data/ku2022_1_absprox.csv"
+    />
+  <SEQUENCE>
+    <!--
+    <task name="SubPGO"/>
+    <task name="ProxMatcher"/>
+    <task name="MainPGO"/>
+    -->
+    <task name="Omnia_to_G2O"/>
+    <!--
+    <task name="GeoConv"/>
+    <task name="Histgram"/>
+    -->
+  </SEQUENCE>
 </setting>

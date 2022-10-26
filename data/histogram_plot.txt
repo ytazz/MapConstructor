@@ -11,7 +11,7 @@ if (OutputTerm  == 2){
 	set output BaseName.".eps"
 }
 if (OutputTerm  == 3){
-	set term svg size 1000,1000 font ",36"
+	set term svg size 1000,400 font ",36"
 	set output BaseName.".svg"
 }
 
@@ -27,42 +27,42 @@ set xrange [0:1]
 set boxwidth FilterWidth
 set key left top
 
-set multiplot layout 3,1
+#set multiplot layout 2,1
 
 set lmargin screen 0.18
 set rmargin screen 0.98
-set tmargin screen 0.90
-set bmargin screen 0.66
-set format x ""
-set xlabel "s"
+#set tmargin screen 0.95
+#set bmargin screen 0.55
+#set format x ""
+#set xlabel ""
 #set yrange [0:8000]
 #set ytics 4000
-set yrange [0:7000]
-set ytics 3500
-plot BaseName."_100.csv" u (filter($1)):(1.) smooth frequency \
-with boxes lc rgb "#FF00FF" lw 2 title "{/Symbol x} = 1.00"
+#set yrange [0:8000]
+#set ytics 4000
+#plot "histogram_X__10.csv" u (filter($1)):(1.) smooth frequency \
+#with boxes lc rgb "#808080" lw 2 title "10 iterations"
 
-set tmargin screen 0.62
-set bmargin screen 0.38
-set format x ""
-set xlabel ""
-#set yrange [0:4000]
-#set ytics 2000
+set tmargin screen 0.95
+set bmargin screen 0.15
+set format x
+set xlabel "s" offset 0,2
+#set yrange [0:100]
+#set ytics 50
 set yrange [0:4000]
 set ytics 2000
 plot BaseName."_010.csv" u (filter($1)):(1.) smooth frequency \
-with boxes lc rgb "#00FFFF" lw 2 title "{/Symbol x} = 0.10"
+with boxes lc rgb "#800080" lw 2 notitle
 
-set tmargin screen 0.34
-set bmargin screen 0.1
-set format x
-set xlabel ""
-set yrange [0:4000]
-set ytics 2000
+#set tmargin screen 0.34
+#set bmargin screen 0.1
+#set format x
+#set xlabel ""
+#set yrange [0:4000]
+#set ytics 2000
 #set yrange [0:2000]
 #set ytics 1000
-plot BaseName."_001.csv" u (filter($1)):(1.) smooth frequency \
-with boxes lc rgb "#FFFF00" lw 2 title "{/Symbol x} = 0.01"
+#plot BaseName."_001.csv" u (filter($1)):(1.) smooth frequency \
+#with boxes lc rgb "#C0C0C0" lw 2 title "{/Symbol x} = 0.01"
 
 unset multiplot
 
