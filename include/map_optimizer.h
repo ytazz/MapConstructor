@@ -21,13 +21,9 @@ using namespace g2o;
 namespace MapConstructor {
 
 class MapOptimizer : public TaskBase {
-	typedef BlockSolver< BlockSolverTraits<-1, -1> >  SlamBlockSolver;
-	typedef LinearSolverEigen<SlamBlockSolver::PoseMatrixType> SlamLinearSolver;
 
 	int n;
 	string load_file, save_file;
-	OptimizationAlgorithmGaussNewton* solver;
-	SparseOptimizer optimizer;
 
 public:
 	MapOptimizer() :TaskBase() {};

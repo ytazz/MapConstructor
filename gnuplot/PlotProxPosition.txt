@@ -1,0 +1,72 @@
+OutputTerm = 3
+Mono = 1
+BaseName = "nc2021_X"
+set encoding utf8
+
+if (OutputTerm  == 1){
+	set term pngcairo color size 2000,2000 enhanced font ",24"
+	if (!Mono){
+		set output ("fig/".BaseName)."_pp.png"
+	}
+	else{
+		set output ("fig/".BaseName)."_pp_mono.png"
+	}
+}
+if (OutputTerm  == 2){
+	set term postscript eps color size 4.5in,3in enhanced font ",18"
+	if (!Mono){
+		set output ("fig/".BaseName)."_pp.eps"
+	}
+	else{
+		set output ("fig/".BaseName)."_pp_mono.eps"
+	}
+}
+if (OutputTerm  == 3){
+	set term svg size 1000,1000 font ",36"
+	if (!Mono){
+		set output ("fig/".BaseName)."_pp.svg"
+	}
+	else{
+		set output ("fig/".BaseName)."_pp_mono.svg"
+	}
+}
+
+set xlabel 'x [m]' offset 0,1.1
+set ylabel 'y [m]' offset 2,0
+
+set tmargin 0
+set bmargin 0
+set lmargin 0
+set rmargin 0
+set size 0.88,0.88
+set origin 0.10,0.10
+set xtics offset 0,0.4
+set ytics offset 0.8,0
+
+#set nokey
+#set xrange [-80:-50]
+#set yrange [-75:-45]
+#set xrange [-75:-45]
+#set yrange [-75:-45]
+#set xrange [-70:-40]
+#set yrange [-80:-50]
+set xrange [-75:-45]
+set yrange [-80:-50]
+#set key left top
+set key right bottom
+#set key at 50,-70
+set key invert
+set size ratio -1
+
+if (!Mono){
+	plot \
+	("../data/".BaseName)."_absprox_c.csv" every :1 using 3:4 with point ps 0.5 pt 7 lc rgb "#ff0000" title "Time series data C", \
+	("../data/".BaseName)."_absprox_b.csv" every :1 using 3:4 with point ps 0.5 pt 7 lc rgb "#800080" title "Time series data B", \
+	("../data/".BaseName)."_absprox_a.csv" every :1 using 3:4 with point ps 0.5 pt 7 lc rgb "#0000ff" title "Time series data A"
+}
+else{
+	plot \
+	("../data/".BaseName)."_absprox_c.csv" every :1 using 3:4 with point ps 0.3 pt 9 lc rgb "#808080" title "Time series data C", \
+	("../data/".BaseName)."_absprox_b.csv" every :1 using 3:4 with point ps 0.3 pt 5 lc rgb "#505050" title "Time series data B", \
+	("../data/".BaseName)."_absprox_a.csv" every :1 using 3:4 with point ps 0.3 pt 7 lc rgb "#000000" title "Time series data A"
+}

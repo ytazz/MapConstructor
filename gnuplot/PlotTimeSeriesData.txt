@@ -1,0 +1,49 @@
+OutputTerm = 3
+BaseName = "ku2022_1"
+
+set encoding utf8
+
+if (OutputTerm  == 1){
+	set term pngcairo color size 2000,2000 enhanced font ",24"
+	set output ("fig/".BaseName).".png"
+}
+if (OutputTerm  == 2){
+	set term postscript eps color size 4.5in,3in enhanced font ",18"
+	set output ("fig/".BaseName).".eps"
+}
+if (OutputTerm  == 3){
+	set term svg size 800,1000 font ",30"
+	set output ("fig/".BaseName).".svg"
+}
+if (OutputTerm  == 4){
+	set term emf size 1000,1000 font ",24"
+	set output ("fig/".BaseName).".emf"
+}
+
+set xlabel 'x [m]' offset 0,1.1
+set ylabel 'y [m]' offset 3,0
+
+set tmargin 0
+set bmargin 0
+set lmargin 0
+set rmargin 0
+set size 0.88,0.88
+set origin 0.10,0.10
+set xtics offset 0,0.4
+set ytics offset 0.8,0
+
+#set xlabel 'longitude [°]'
+#set ylabel 'latitude [°]'
+set nokey
+set xrange [-100:150]
+set yrange [-250:100]
+#set key left top
+#set key right bottom
+#set key at 50,-10
+#set key invert
+set size ratio -1
+
+plot \
+"../data/ku2022_1_absprox.csv" every :3 using 3:4 with point ps 0.2 pt 7 lc rgb "#0000ff" notitle , \
+"../data/ku2022_1_loc.csv" every 3 using 3:4 with lines lw 5 lc rgb "#000000" notitle , \
+"../data/ku2022_1_proxmatch.csv" every :3 using 4:5 with lines lw 1 lc rgb "#ff0000" notitle
