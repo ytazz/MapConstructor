@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <time.h>
+#include <conio.h>
 
 using namespace std;
 using namespace g2o;
@@ -18,10 +19,17 @@ int MapOptimizer::Task(Scenebuilder::XMLNode *setting) {
 	setting->Get<string>(load_file, ".LoadFile");
 	setting->Get<string>(save_file, ".SaveFile");
 
+	typedef BlockSolver< BlockSolverTraits<-1, -1> >  SlamBlockSolver;
+	typedef LinearSolverEigen<SlamBlockSolver::PoseMatrixType> SlamLinearSolver;
+
 	auto linearSolver = g2o::make_unique<SlamLinearSolver>();
 	linearSolver->setBlockOrdering(false);
-	solver = new OptimizationAlgorithmGaussNewton(
+	OptimizationAlgorithmGaussNewton* solver = new OptimizationAlgorithmGaussNewton(
 		g2o::make_unique<SlamBlockSolver>(std::move(linearSolver)));
+	SparseOptimizer optimizer;
+
+	//cerr << "type ::  " << typeid(optimizer).name() << endl;
+	optimizer.clear();
 
 	optimizer.setAlgorithm(solver);
 
@@ -30,10 +38,6 @@ int MapOptimizer::Task(Scenebuilder::XMLNode *setting) {
 	//VertexProx* firstRobotPose = dynamic_cast<VertexProx*>(optimizer.vertex(0));
 	optimizer.vertex(0)->setFixed(true);
 	optimizer.setVerbose(true);
-
-	//ParameterPPWInfo* ppwi;
-	//ppwi->setInfo(10.);
-	//optimizer.addParameter(ppwi);
 
 	cerr << "Optimizing" << endl;
 	optimizer.initializeOptimization();

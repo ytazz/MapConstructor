@@ -57,6 +57,7 @@ set(MAP_OPTIMIZER_HEADERS
 
 set(MAP_OPTIMIZER_SOURCES
   "src/main.cpp"
+  "src/base.cpp"
   "src/map_optimizer.cpp"
   "src/map_converter.cpp"
   "src/save_weight_histogram.cpp"
