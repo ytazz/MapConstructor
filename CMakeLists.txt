@@ -48,21 +48,31 @@ include_directories(${MKL_INCLUDE_DIR})
 
 set(MAP_OPTIMIZER_HEADERS
   "include/base.h"
-  "include/map_optimizer.h"
-  "include/map_converter.h"
-  "include/save_weight_histogram.h"
-  "include/geo_converter.h"
-  "include/prox_matcher.h"
+  "include/converter.h"
+  "include/gauss_newton.h"
+  "include/g2o_file_io.h"
+  "include/g2o_optimizer.h"
+  "include/map_direction_optimizer.h"
+  "include/map_loader.h"
+  "include/map_saver.h"
+  "include/provisional_task.h"
+  "include/prox_optimizer.h"
+  "include/scan_matcher.h"
+  "include/util.h"
 )
 
 set(MAP_OPTIMIZER_SOURCES
-  "src/main.cpp"
   "src/base.cpp"
-  "src/map_optimizer.cpp"
-  "src/map_converter.cpp"
-  "src/save_weight_histogram.cpp"
-  "src/geo_converter.cpp"
-  "src/prox_matcher.cpp"
+  "src/converter.cpp"
+  "src/gauss_newton.cpp"
+  "src/g2o_file_io.cpp"
+  "src/g2o_optimizer.cpp"
+  "src/main.cpp"
+  "src/map_direction_optimizer.cpp"
+  "src/map_loader.cpp"
+  "src/map_saver.cpp"
+  "src/prox_optimizer.cpp"
+  "src/scan_matcher.cpp"
 )
 
 set(MAP_OPTIMIZER_CONFIGS

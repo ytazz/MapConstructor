@@ -15,6 +15,8 @@
 #include "g2o/core/optimization_algorithm_factory.h"
 #include "g2o/core/optimization_algorithm_gauss_newton.h"
 #include "g2o/solvers/eigen/linear_solver_eigen.h"
+#include "g2o/core/robust_kernel_impl.h"
+#include "g2o/core/robust_kernel_factory.h"
 
 using namespace g2o;
 
@@ -22,12 +24,10 @@ namespace MapConstructor {
 
 class MapOptimizer : public TaskBase {
 
-	int n;
-	string load_file, save_file;
-
 public:
-	MapOptimizer() :TaskBase() {};
-	virtual int Task(Scenebuilder::XMLNode*);
+	MapOptimizer(Scenebuilder::XMLNode* _setting, Maps* _maps, Matches* _matches, SparseOptimizer* _optimizer)
+		: TaskBase(_setting, _maps, _matches, _optimizer) {};
+	virtual int Task(int argc, const char* argv[]);
 };
 
 }

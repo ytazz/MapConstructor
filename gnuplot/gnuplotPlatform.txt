@@ -1,6 +1,6 @@
-load "PlotPoseGraph.txt"
-#load "PlotProxPosition.txt"
-#load "PlotTimeSeriesData.txt"
+load "PoseGraph.txt"
+#load "ProxPosition.txt"
+#load "TimeSeriesData.txt"
 #load "UtilityPlot.txt"
 
 unset output

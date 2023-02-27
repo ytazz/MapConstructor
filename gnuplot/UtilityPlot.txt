@@ -1,7 +1,7 @@
 OutputTerm = 3
 #BaseName = "square_sum"
 #BaseName = "Geman_McClure"
-BaseName = "geman"
+BaseName = "SWITCH"
 
 x1 = 1.0
 x2 = 1.5
@@ -11,6 +11,7 @@ a2 = 2
 a3 = 1.5
 c = 1
 Geman_McClure(x) = (x/(x+1**2))
+Huber(x) = (x < -c) ? c*(-2*x-c) : (x < c) ? x**2 : c*(2*x-c)
 
 set encoding utf8
 
@@ -44,12 +45,12 @@ set ytics offset 0.8,0
 #set xlabel 'wave vector k' offset 0,1.1
 #set ylabel 'Energies of waves' offset 3,0
 #set nokey
-set xrange [-3:3]
+#set xrange [-3:3]
 #set yrange [0:5]
-set yrange [-0.1:2.1]
-set size ratio -1
-set xtics -3, 1, 3
-set ytics 0, 0.5, 2
+set yrange [0:1]
+#set size ratio -1
+#set xtics -3, 1, 3
+#set ytics 0, 0.5, 2
 #set key left top
 #set key right bottom
 #set key at 50,-10
@@ -61,8 +62,9 @@ set ytics 0, 0.5, 2
 #set format y "%6.4f"
 
 plot \
-a1**2*x**2 with line lw 3 lc rgb "#ff0000" title "squaring", \
-Geman_McClure(a1**2*x**2) with line lw 3 lc rgb "#00ff00" title "Geman-McClure"
+"../data/Switch.csv" using (1.0):2:(0):1 with boxplot
+#a1**2*x**2 with line lw 3 lc rgb "#ff0000" title "squaring", \
+#Geman_McClure(a1**2*x**2) with line lw 3 lc rgb "#00ff00" title "Geman-McClure"
 #Geman_McClure((a1**2)*((x-x1)**2)) with line lw 3 lc rgb "#ff0000" notitle, \
 #Geman_McClure((a2**2)*((x-x2)**2)) with line lw 3 lc rgb "#00ff00" notitle, \
 #Geman_McClure((a3**2)*((x-x3)**2)) with line lw 3 lc rgb "#0000ff" notitle, \

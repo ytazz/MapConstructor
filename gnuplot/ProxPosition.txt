@@ -1,0 +1,57 @@
+OutputTerm = 3
+Env = "_nc2021"
+Tag = "SSE2"
+BaseName = (Env."_").Tag
+set encoding utf8
+angle = 115*pi/180
+X(x,y) = (x*cos(angle)-y*sin(angle))
+Y(x,y) = (x*sin(angle)+y*cos(angle))
+
+if (OutputTerm  == 1){
+	set term pngcairo color size 2000,2000 enhanced font ",24"
+	set output ("fig/".BaseName)."_pp.png"
+}
+if (OutputTerm  == 2){
+	set term postscript eps color size 4.5in,3in enhanced font ",18"
+	set output ("fig/".BaseName)."_pp.eps"
+}
+if (OutputTerm  == 3){
+	set term svg size 1000,1000 font ",36"
+	set output ("fig/".BaseName)."_pp.svg"
+}
+
+set xlabel 'x [m]' offset 0,1.1
+set ylabel 'y [m]' offset 2,0
+
+set tmargin 0
+set bmargin 0
+set lmargin 0
+set rmargin 0
+set size 0.88,0.88
+set origin 0.10,0.10
+set xtics offset 0,0.4
+set ytics offset 0.8,0
+
+#set nokey
+set xrange [70:110]
+set xtics 10
+set yrange [-40:0]
+set ytics 10
+#set key left top
+#set key right top
+set key left bottom
+#set key right bottom
+#set key at 50,-70
+set key invert
+set size ratio -1
+
+plot \
+(("../data/".Env).("_D_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#0000ff" title "Time series data C", \
+(("../data/".Env).("_B_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#800080" title "Time series data B", \
+(("../data/".Env).("_A_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#ff0000" title "Time series data A"
+
+
+#	(("../data/".Env).("_7_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 15 lc rgb "#c0c0c0" title "Time series data D", \
+#	(("../data/".Env).("_6_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 9 lc rgb "#808080" title "Time series data C", \
+#	(("../data/".Env).("_2_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 5 lc rgb "#404040" title "Time series data B", \
+#	(("../data/".Env).("_1_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#000000" title "Time series data A"
