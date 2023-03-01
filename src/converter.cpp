@@ -78,8 +78,22 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 			OdomSetting->Get(tag, ".Tag");
 			if (tag == "EDGE_SE2") {
 				mat3_t info = mat3_t::Zero();
-				vec3_t PoseRefGain;
-				OdomSetting->Get<vec3_t>(PoseRefGain, ".poseRefGain");
+				vec3_t prInfoGain;
+				OdomSetting->Get<vec3_t>(prInfoGain, ".poseRef-InfoGain");
+				for (int i = 0; i < 3; i++)
+					prInfoGain[i] = min(prInfoGain[i], 1e+8);
+				vec3_t _mInfoGain;
+				OdomSetting->Get<vec3_t>(_mInfoGain, ".movement-InfoGain");
+				for (int i = 0; i < 3; i++)
+					_mInfoGain[i] = min(_mInfoGain[i], 1e+8);
+				mat3_t mInfoGain;
+				for (int i = 0; i < 3; i++)
+					for (int j = 0; j < 3; j++)
+						mInfoGain[i][j] = sqrt(_mInfoGain[i] * _mInfoGain[j]);
+				vec3_t InfoLimit;
+				OdomSetting->Get<vec3_t>(InfoLimit, ".infoLimit");
+				for (int i = 0; i < 3; i++)
+					InfoLimit[i] = min(max(InfoLimit[i], 1e-8), 1e+8);
 				for (int i = 1; i < map.nodes.size(); i++) {
 					Node& node = map.nodes[i];
 					node.movement.odometry.first = new EdgeSE2;
@@ -93,9 +107,9 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 						pose_t poseRef3D = prevNode.location.pose.Inv() * node.location.pose;
 						pos = vec2_t{ poseRef3D.Pos().X(), poseRef3D.Pos().Y() };
 						angle = WrapPi(poseRef3D.Ori().Rotation().Z());
-						info(0, 0) = pos.x != 0. ? min(PoseRefGain[0] * PoseRefGain[0] / (pos.x * pos.x), 1.e8) : 1.e8;
-						info(1, 1) = pos.y != 0. ? min(PoseRefGain[1] * PoseRefGain[1] / (pos.y * pos.y), 1.e8) : 1.e8;
-						info(2, 2) = angle != 0. ? min(PoseRefGain[2] * PoseRefGain[2] / (angle * angle), 1.e8) : 1.e8;
+						info(0, 0) = pos.x != 0. ? min(prInfoGain[0] / (pos.x * pos.x), InfoLimit[0]) : InfoLimit[0];
+						info(1, 1) = pos.y != 0. ? min(prInfoGain[1] / (pos.y * pos.y), InfoLimit[1]) : InfoLimit[1];
+						info(2, 2) = angle != 0. ? min(prInfoGain[2] / (angle * angle), InfoLimit[2]) : InfoLimit[2];
 						node.movement.odometry.first->vertices()[0] = optimizer->vertex(prevNode.vertex->id());
 						node.movement.odometry.first->vertices()[1] = optimizer->vertex(node.vertex->id());
 					}
@@ -105,7 +119,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 						const array<int, 3> index = { 0, 1, 5 };
 						for (int i = 0; i < 3; i++)
 							for (int j = 0; j < 3; j++)
-								info(i, j) = PoseRefGain[i] * PoseRefGain[j] * node.movement.info[index[i]][index[j]];
+								info(i, j) = mInfoGain[i][j] * node.movement.info[index[i]][index[j]];
 						node.movement.odometry.first->vertices()[0] = optimizer->vertex(map.nodes[i - 1].vertex->id());
 						node.movement.odometry.first->vertices()[1] = optimizer->vertex(node.vertex->id());
 					}
@@ -181,7 +195,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 			}
 			else if (tag == "EDGE_PROX") {
 				real_t ProxSimGain = 1.;
-				LoopSetting->Get<real_t>(ProxSimGain, ".proxSimGain");
+				LoopSetting->Get<real_t>(ProxSimGain, ".proxSim-InfoGain");
 				for (NodeMatch& nm : lm)
 					for (ProxMatch& pm : nm.proxMatches) {
 						Eigen::Matrix2d info = Eigen::Matrix2d::Zero();
@@ -198,7 +212,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 			}
 			else if (tag == "EDGE_SWITCH_PROX") {
 				real_t ProxSimGain, SwitchInfo;
-				LoopSetting->Get<real_t>(ProxSimGain, ".proxSimGain");
+				LoopSetting->Get<real_t>(ProxSimGain, ".proxSim-InfoGain");
 				LoopSetting->Get<real_t>(SwitchInfo, ".switchInfo");
 				for (NodeMatch& nm : lm)
 					for (ProxMatch& pm : nm.proxMatches) {
@@ -222,7 +236,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 			else if (tag == "EDGE_M_Est_PROX") {
 				string strRobustKernel;
 				real_t ProxSimGain, Delta;
-				LoopSetting->Get<real_t>(ProxSimGain, ".proxSimGain");
+				LoopSetting->Get<real_t>(ProxSimGain, ".proxSim-InfoGain");
 				LoopSetting->Get<string>(strRobustKernel, ".robustKernel");
 				LoopSetting->Get<real_t>(Delta, ".robustKernelDelta");
 				for (NodeMatch& nm : lm)
@@ -274,33 +288,6 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 			}
 	}
 
-	return -1;
-}
-
-int ToMapConverter::Task(int argc, const char* argv[]) {
-	matches->clear();
-	maps->clear();
-
-	int MapNum;
-	setting->Get<int>(MapNum, ".mapNum");
-	if (MapNum < 1)
-		return -1;
-	maps->resize(MapNum);
-	vector<XMLNode*> MapsSetting(MapNum);
-	vector<pair<int, int>> indexRanges;
-	for (int i = 0; i < MapsSetting.size(); i++) {
-		MapsSetting[i] = setting->GetNode("Node", i);
-		MapsSetting[i]->Get<int>(maps->at(i).id, ".ID");
-		MapsSetting[i]->Get<int>(indexRanges[i].first, ".ID");
-		MapsSetting[i]->Get<int>(indexRanges[i].second, ".ID");
-		maps->at(i).nodes.resize(indexRanges[i].second - indexRanges[i].first + 1, Node(&maps->at(i)));
-	}
-	for (int i = 0; i < optimizer->vertices().size(); i++)
-		for (int j = 0; j < MapNum; j++) {
-			if (optimizer->vertex(i)->id() < indexRanges[j].first || indexRanges[j].second < optimizer->vertex(i)->id())
-				continue;
-			maps->at(j).nodes[optimizer->vertex(i)->id() - indexRanges[j].first].vertex = optimizer->vertex(i);
-		}
 	return -1;
 }
 

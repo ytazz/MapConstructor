@@ -1,0 +1,9 @@
+<platform>
+  <platform name = "geo_convert"/>
+  <!--
+  <platform name = "nc2021"/>
+  <platform name = "nc2022"/>
+  <platform name = "ku2022"/>
+  <platform name = "geo_convert"/>
+  -->
+</platform>

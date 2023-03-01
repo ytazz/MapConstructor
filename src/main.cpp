@@ -79,8 +79,6 @@ int sequencer(Scenebuilder::XMLNode* TASKS) {
 						task = new MapConstructor::G2OFileIO(setting.GetNode(ID[j]), &maps, &matches, &optimizer);
 					else if (task_name == "ToG2OConverter")
 						task = new MapConstructor::ToG2OConverter(setting.GetNode(ID[j]), &maps, &matches, &optimizer);
-					else if (task_name == "ToMapConverter")
-						task = new MapConstructor::ToMapConverter(setting.GetNode(ID[j]), &maps, &matches, &optimizer);
 					else if (task_name == "Provisional")
 						task = new MapConstructor::Provisional(setting.GetNode(ID[j]), &maps, &matches, &optimizer);
 					else
@@ -98,7 +96,6 @@ int sequencer(Scenebuilder::XMLNode* TASKS) {
 
 int main(int argc, char** argv)
 {
-
 	//std::ofstream ofstr("../data/cerr.txt");
 	//std::streambuf* coutbuf;
 	//std::streambuf* cerrbuf;
@@ -106,15 +103,20 @@ int main(int argc, char** argv)
 	//cerrbuf = std::cerr.rdbuf(ofstr.rdbuf());
 
 	try {
-		setting.Load("../conf/settings.xml");
+		setting.Load("../conf/platform.xml");
+
+		XMLNode* platformFile = setting.GetRootNode()->GetNode("platform", false);
+		string platformStr;
+		platformFile->Get<string>(platformStr, ".name");
+		setting.Load("../conf/" + platformStr + ".xml");
+
+		sequencer(setting.GetRootNode()->GetNode("SEQUENCE", false));
+
+		cout << endl << endl << "Sequence completed." << endl
+			<< "Hit any key." << endl;
+		while (!_kbhit()); _getch();
 	}
 	catch (...) { return -1; };
-
-	sequencer(setting.GetRootNode()->GetNode("SEQUENCE", false));
-
-	cout << endl << endl << "Sequence completed." << endl
-		<< "Hit any key." << endl;
-	while (!_kbhit()); _getch();
 
 	//std::cout.rdbuf(coutbuf);
 	//std::cerr.rdbuf(cerrbuf);

@@ -98,7 +98,7 @@ bool MapSaver::GeoSaver(int mapID) {
 		<< "geo_lat, geo_lon, geo_alt, "
 		<< "geo_tim, geo_sat, geo_quality, , " << endl;
 	for (Node& node : map->nodes) {
-		if (node.geography.llh == vec3_t() || node.time % timeScale != 0
+		if (node.geography.llh == vec3_t()
 			|| node.geography.numSat < minSatNum || node.geography.quality < minQuality)
 			continue;
 		saveFile << node.geography.geoCount << ", "
@@ -206,11 +206,11 @@ bool MapSaver::LocGeoSaver(int mapID) {
 		<< "location_pos_x, location_pos_y, location_pos_z, "
 		<< "geo_tim, geo_sat, geo_quality, , " << endl;
 	for (Node& node : map->nodes) {
-		if (node.geography.llh == vec3_t() || node.time % timeScale != 0
+		if (node.geography.llh == vec3_t()
 			|| node.geography.numSat < minSatNum || node.geography.quality < minQuality)
 			continue;
 		node.geography.llh_to_ecef();
-		node.geography.ecef_to_enu(&(OrigNode.geography));
+		node.geography.ecef_to_enu(OrigNode.geography);
 		node.geography.enu_to_xyz(AngOffset, PosOffset);
 		saveFile << node.geography.geoCount << ", "
 			<< node.time << ", "
@@ -285,7 +285,6 @@ bool MapSaver::AbsProxMatchSaver() {
 int MapSaver::Task(int argc, const char* argv[]) {
 	int mapNum = 0;
 	setting->Get<int>(mapNum, ".mapNum");
-	setting->Get<int>(timeScale, ".timeScale");
 	setting->Get<int>(minSatNum, ".minSatNum");
 	setting->Get<int>(minQuality, ".minQuality");
 	setting->Get<vec3_t>(OrigLLH, ".OrigLLH");

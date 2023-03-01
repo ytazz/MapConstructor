@@ -134,6 +134,9 @@ bool MapLoader::GeoLoader(const int mapID) {
 		map->id = mapID;
 	}
 
+	int timeScale = 500;
+	setting->Get<int>(timeScale, ".timeScale");
+
 	for (int r = 0; r < loadFile.NumRow(); r++) {
 		const int count = loadFile.Get<int>(r, 0);
 		const int time = loadFile.Get<int>(r, 1);
@@ -152,8 +155,17 @@ bool MapLoader::GeoLoader(const int mapID) {
 		}
 		else {
 			node = map->nodes.FindByTime(time);
-			if (!node)
-				continue;
+			if (!node) {
+				if (time % timeScale == 0) {
+					push_back(map->nodes, Node(map));
+					node = &(map->nodes.back());
+					node->count = -1;
+					node->time = time;
+					node->index = NodeId++;
+				}
+				else
+					continue;
+			}
 		}
 		node->geography.geoCount = count;
 		node->geography.llh = vec3_t{ D2R * loadFile.Get<real_t>(r, 2), D2R * loadFile.Get<real_t>(r, 3), loadFile.Get<real_t>(r, 4) };
@@ -320,10 +332,6 @@ int MapLoader::Task(int argc, const char* argv[]) {
 	setting->Get<string>(delim, ".delim");
 	int mapNum = 0;
 	setting->Get<int>(mapNum, ".mapNum");
-	setting->Get<int>(timeScale, ".timeScale");
-	//setting->Get<real_t>(minProxMatchSimilarity, ".minProxMatchSimilarity");
-	//setting->Get<real_t>(maxPosMatchError, ".maxPosMatchError");
-	//setting->Get<real_t>(maxYawMatchError, ".maxYawMatchError");
 	string formatLine;
 	setting->Get<string>(formatLine, ".loadFormat");
 	vector<string> format = split(formatLine, ' ');

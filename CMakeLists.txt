@@ -76,7 +76,11 @@ set(MAP_OPTIMIZER_SOURCES
 )
 
 set(MAP_OPTIMIZER_CONFIGS
-  "conf/settings.xml"
+  "conf/platform.xml"
+  "conf/nc2021.xml"
+  "conf/nc2022.xml"
+  "conf/ku2022.xml"
+  "conf/geo_convert.xml"
 )
 
 source_group("Header Files"	FILES ${MAP_OPTIMIZER_HEADERS})

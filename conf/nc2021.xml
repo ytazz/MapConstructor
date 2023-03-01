@@ -1,0 +1,196 @@
+<nc2021>
+  <MapLoader
+    name = "OmniaLoad"
+    mapNum = "3"
+    delim = ","
+    loadFormat = "Loc Prox Match"
+    MatchFile   = "../data/nc2021_match.csv"
+    PoseRefFile = "../data/nc2021_SM_poseref.csv"
+    >
+    <Map ID = "1"
+      LocFile      = "../data/nc2021_A_loc.csv"
+      ProxFile     = "../data/nc2021_A_prox.csv"
+      MovementFile = "../data/nc2021_A_movement.csv"
+      PCFile       = "../data/nc2021_A_pc.csv"
+      />
+    <Map ID = "2"
+      LocFile      = "../data/nc2021_B_loc.csv"
+      ProxFile     = "../data/nc2021_B_prox.csv"
+      MovementFile = "../data/nc2021_B_movement.csv"
+      PCFile       = "../data/nc2021_B_pc.csv"
+      />
+    <Map ID = "3"
+      LocFile      = "../data/nc2021_D_loc.csv"
+      ProxFile     = "../data/nc2021_D_prox.csv"
+      MovementFile = "../data/nc2021_D_movement.csv"
+      PCFile       = "../data/nc2021_D_pc.csv"
+      />
+  </MapLoader>
+
+  <MapSaver
+    name = "OmniaSave"
+    mapNum = "3"
+    saveFormat = "Loc AbsProx LocMatch AbsProxMatch"
+    MatchFile        = "../data/nc2021_SPROX_match.csv"
+    LocMatchFile     = "../data/nc2021_SPROX_locmatch.csv"
+    AbsProxMatchFile = "../data/nc2021_SPROX_absproxmatch.csv"
+    PoseRefFile      = "../data/nc2021_SM_poseref.csv"
+    >
+    <Map ID = "1"
+      LocFile      = "../data/nc2021_A_SPROX_loc.csv"
+      ProxFile     = "../data/nc2021_A_SPROX_prox.csv"
+      AbsProxFile  = "../data/nc2021_A_SPROX_absprox.csv"
+      MovementFile = "../data/nc2021_A_movement.csv"
+      />
+    <Map ID = "2"
+      LocFile      = "../data/nc2021_B_SPROX_loc.csv"
+      ProxFile     = "../data/nc2021_B_SPROX_prox.csv"
+      AbsProxFile  = "../data/nc2021_B_SPROX_absprox.csv"
+      MovementFile = "../data/nc2021_B_movement.csv"
+      />
+    <Map ID = "3"
+      LocFile      = "../data/nc2021_D_SPROX_loc.csv"
+      ProxFile     = "../data/nc2021_D_SPROX_prox.csv"
+      AbsProxFile  = "../data/nc2021_D_SPROX_absprox.csv"
+      MovementFile = "../data/nc2021_D_movement.csv"
+      />
+  </MapSaver>
+
+  <G2OFileIO
+    name = "PoseGraph"
+    LoadFileName = "../data/before_nc2021.g2o"
+    SaveFileName = "../data/after_nc2021_SPROX.g2o"
+    />
+
+  <G2OFileIO
+    name = "BeforePGO"
+    SaveFileName = "../data/before_nc2021.g2o"
+    />
+
+  <G2OFileIO
+    name = "AfterPGO"
+    SaveFileName = "../data/afte_nc2021_SPROX.g2o"
+    />
+
+  <MapOptimizer
+    name     = "PoseGraphOptimization"
+    ItrNum  = "0"
+    />
+
+  <ToG2OConverter
+    name = "ToG2O"
+    >
+    <Node Tag = "VERTEX_PROX"/>
+    <Odom Tag = "EDGE_SE2"
+      poseRef-InfoGain  = "100 100 1"
+      movement-InfoGain = "1 1 0.01"
+      infoLimit         = "10^8 10^8 10^3"
+      />
+    <Loop Tag = "EDGE_SWITCH_PROX"
+      proxSim-InfoGain = "-0.05"
+      switchInfo       = "0.2"
+      />
+  </ToG2OConverter>
+
+  <ToG2OConverter
+    name = "_ToG2O"
+    >
+    <Node Tag = "VERTEX_PROX"/>
+    <Odom Tag = "EDGE_SE2"
+      poseRef-InfoGain  = "100 100 100"
+      movement-InfoGain = "1 1 1"
+      infoLimit         = "10^8 10^8 10^8"
+      />
+    <Loop Tag = "EDGE_SE2"
+      />
+  </ToG2OConverter>
+  <!--
+    <Loop Tag = "EDGE_M_Est_PROX"
+      proxSimGain = "-1"
+      robustKernel = "Huber"
+      robustKernelDelta = "1"
+      />
+      
+      
+    <Loop Tag = "EDGE_SWITCH_PROX"
+      proxSimGain = "-1"
+      switchInfo  = "0.1"
+      />
+    
+    Node
+      Tag = "VERTEX_PROX"
+            "VERTEX_SE2"
+    Odom
+      Tag = "EDGE_SE2"
+    Loop
+      Tag = "EDGE_SE2"
+            "EDGE_SWITCH_SE2"
+            "EDGE_PROX"
+            "EDGE_SWITCH_PROX"
+            "EDGE_M_Est_PROX"
+    M_Est
+      robustKernel = "Huber"
+                     "Cauchy"
+                     "GemanMcClure"
+  -->
+
+  <ProxMatcher
+    name     = "ProxMatcher"
+    clacSimEqMethod = "LDLT"
+    maxItr = "30"
+    >
+    <Match ID = "0"/>
+    <Match ID = "1"/>
+    <Match ID = "2"/>
+    <Match ID = "3"/>
+    <Match ID = "4"/>
+    <Match ID = "5"/>
+  </ProxMatcher>
+
+  <ScanMatcher
+    name     = "ScanMatcher"
+    clacSimEqMethod = "LDLT"
+    verticalRange = "-0.15deg 0.15deg"
+    skip = "1"
+    ignoreRatio = "2"
+    maxItr = "10"
+    >
+    <Match/>
+  </ScanMatcher>
+
+  <MapDirPrepro
+    name     = "MapDirPrepro"
+    clacSimEqMethod = "LDLT"
+    />
+
+  <Provisional name = "Provisional"/>
+  
+  
+  <SEQUENCE>
+    <task name="OmniaLoad"/>
+    <task name="ToG2O Forward"/>
+    <task name="BeforePGO Save"/>
+    <task name="PoseGraphOptimization"/>
+    <task name="AfterPGO Save"/>
+    <task name="ToG2O Reverse"/>
+    <task name="OmniaSave"/>
+    <!--
+    <task name="OmniaLoad"/>
+    <task name="_ToG2O Forward"/>
+    <task name="BeforePGO Save"/>
+    <task name="PoseGraphOptimization"/>
+    <task name="AfterPGO Save"/>
+    <task name="_ToG2O Reverse"/>
+    <task name="OmniaSave"/>
+    
+    <task name="ScanMatcher"/>
+    <task name="ProxMatcher"/>
+    
+    <task name="PoseGraph Load"/>
+    <task name="PoseGraph Save"/>
+    
+    <task name="for" n="1">
+    </task>    
+    -->
+  </SEQUENCE>
+</nc2021>

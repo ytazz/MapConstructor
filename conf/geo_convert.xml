@@ -1,0 +1,49 @@
+<nc2021>
+  <MapLoader
+    name = "GeoLoad"
+    mapNum = "3"
+    delim = ","
+    timeScale = "500"
+    loadFormat = "Geo"
+    >
+    <Map ID = "1"
+      GeoFile      = "../data/nc2021_A_geo.csv"
+      />
+    <Map ID = "2"
+      GeoFile      = "../data/nc2021_B_geo.csv"
+      />
+    <Map ID = "3"
+      GeoFile      = "../data/nc2021_D_geo.csv"
+      />
+  </MapLoader>
+
+  <MapSaver
+    name = "LocGeoSave"
+    mapNum = "3"
+    saveFormat = "LocGeo"
+    minSatNum = "0"
+    minQuality = "0"
+    OrigLLH = "34.660647deg 135.446145deg 5.084000"
+    AngOffset = "-120deg"
+    PosOffset = "0 0"
+    >
+    <Map ID = "1"
+      GeoFile      = "../data/nc2021_A_geo_.csv"
+      LocGeoFile   = "../data/nc2021_A_locgeo.csv"
+      />
+    <Map ID = "2"
+      GeoFile      = "../data/nc2021_B_geo_.csv"
+      LocGeoFile   = "../data/nc2021_B_locgeo.csv"
+      />
+    <Map ID = "3"
+      GeoFile      = "../data/nc2021_D_geo_.csv"
+      LocGeoFile   = "../data/nc2021_D_locgeo.csv"
+      />
+  </MapSaver>
+  
+  
+  <SEQUENCE>
+    <task name="GeoLoad"/>
+    <task name="LocGeoSave"/>
+  </SEQUENCE>
+</nc2021>

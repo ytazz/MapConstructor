@@ -44,14 +44,14 @@ void Geo::llh_to_ecef() {
 	ecef[2] = (alpha * (1. - e2) / chi + llh[2]) * Slat;
 }
 
-void Geo::ecef_to_enu(const Geo* origGeo) {
-	const double Clat = cos(origGeo->llh[0]), Slat = sin(origGeo->llh[0]),
-		Clon = cos(origGeo->llh[1]), Slon = sin(origGeo->llh[1]);
+void Geo::ecef_to_enu(const Geo& origGeo) {
+	const double Clat = cos(origGeo.llh[0]), Slat = sin(origGeo.llh[0]),
+		Clon = cos(origGeo.llh[1]), Slon = sin(origGeo.llh[1]);
 	const mat3_t ConvMat
 		= { -Slon,			Clon,			0.,
 			-Slat * Clon,	-Slat * Slon,	Clat,
 			Clat * Clon,	Clat * Slon,	Slat };
-	enu = ConvMat * (ecef - origGeo->ecef);
+	enu = ConvMat * (ecef - origGeo.ecef);
 }
 
 void Geo::enu_to_xyz(const real_t& AngOffset, const vec2_t& PosOffset) {

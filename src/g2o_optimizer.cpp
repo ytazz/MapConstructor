@@ -21,7 +21,7 @@ int MapOptimizer::Task(int argc, const char* argv[]) {
 	optimizer->setAlgorithm(solver);
 
 	int n = 0;
-	setting->Get<int>(n, ".LoopNum");
+	setting->Get<int>(n, ".ItrNum");
 
 	optimizer->vertex(0)->setFixed(true);
 	optimizer->setVerbose(true);

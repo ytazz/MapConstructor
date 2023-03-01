@@ -92,7 +92,7 @@ public:
 		llh(NAN, NAN, NAN), ecef(NAN, NAN, NAN), enu(NAN, NAN, NAN), xyz(NAN, NAN, NAN), node(_node) {}
 	Geo() : Geo(nullptr) {}
 	void llh_to_ecef();
-	void ecef_to_enu(const Geo* origGeo);
+	void ecef_to_enu(const Geo& origGeo);
 	void enu_to_xyz(const real_t& AngOffset, const vec2_t& PosOffset);
 };
 

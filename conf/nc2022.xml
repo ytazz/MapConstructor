@@ -1,0 +1,203 @@
+<setting>
+  <MapLoader
+    name = "OmniaLoad"
+    mapNum = "4"
+    delim = ","
+    loadFormat = "Loc Prox Match"
+    MatchFile   = "../data/nc2022_match.csv"
+    PoseRefFile = "../data/nc2022_SM_poseref.csv"
+    >
+    <Map ID = "1"
+      LocFile      = "../data/nc2022_1_loc.csv"
+      ProxFile     = "../data/nc2022_1_prox.csv"
+      MovementFile = "../data/nc2022_1_movement.csv"
+      PCFile       = "../data/nc2022_1_pc.csv"
+      />
+    <Map ID = "2"
+      LocFile      = "../data/nc2022_2_loc.csv"
+      ProxFile     = "../data/nc2022_2_prox.csv"
+      MovementFile = "../data/nc2022_2_movement.csv"
+      PCFile       = "../data/nc2022_2_pc.csv"
+      />
+    <Map ID = "3"
+      LocFile      = "../data/nc2022_6_loc.csv"
+      ProxFile     = "../data/nc2022_6_prox.csv"
+      MovementFile = "../data/nc2022_6_movement.csv"
+      PCFile       = "../data/nc2022_6_pc.csv"
+      />
+    <Map ID = "4"
+      LocFile      = "../data/nc2022_7_loc.csv"
+      ProxFile     = "../data/nc2022_7_prox.csv"
+      MovementFile = "../data/nc2022_7_movement.csv"
+      PCFile       = "../data/nc2022_7_pc.csv"
+      />
+  </MapLoader>
+
+  <MapSaver
+    name = "OmniaSave"
+    mapNum = "4"
+    saveFormat = "Loc AbsProx LocMatch AbsProxMatch"
+    MatchFile        = "../data/nc2022_SPROX_match.csv"
+    LocMatchFile     = "../data/nc2022_SPROX_locmatch.csv"
+    AbsProxMatchFile = "../data/nc2022_SPROX_absproxmatch.csv"
+    PoseRefFile      = "../data/nc2022_SM_poseref.csv"
+    >
+    <Map ID = "1"
+      LocFile      = "../data/nc2022_1_SPROX_loc.csv"
+      ProxFile     = "../data/nc2022_1_SPROX_prox.csv"
+      AbsProxFile  = "../data/nc2022_1_SPROX_absprox.csv"
+      MovementFile = "../data/nc2022_1_movement.csv"
+      />
+    <Map ID = "2"
+      LocFile      = "../data/nc2022_2_SPROX_loc.csv"
+      ProxFile     = "../data/nc2022_2_SPROX_prox.csv"
+      AbsProxFile  = "../data/nc2022_2_SPROX_absprox.csv"
+      MovementFile = "../data/nc2022_2_movement.csv"
+      />
+    <Map ID = "3"
+      LocFile      = "../data/nc2022_6_SPROX_loc.csv"
+      ProxFile     = "../data/nc2022_6_SPROX_prox.csv"
+      AbsProxFile  = "../data/nc2022_6_SPROX_absprox.csv"
+      MovementFile = "../data/nc2022_6_movement.csv"
+      />
+    <Map ID = "4"
+      LocFile      = "../data/nc2022_7_SPROX_loc.csv"
+      ProxFile     = "../data/nc2022_7_SPROX_prox.csv"
+      AbsProxFile  = "../data/nc2022_7_SPROX_absprox.csv"
+      MovementFile = "../data/nc2022_7_movement.csv"
+      />
+  </MapSaver>
+
+  <G2OFileIO
+    name = "PoseGraph"
+    LoadFileName = "../data/before_nc2022.g2o"
+    SaveFileName = "../data/after_nc2022_SPROX.g2o"
+    />
+
+  <G2OFileIO
+    name = "BeforePGO"
+    SaveFileName = "../data/before_nc2022.g2o"
+    />
+
+  <G2OFileIO
+    name = "AfterPGO"
+    SaveFileName = "../data/afte_nc2022_SPROX.g2o"
+    />
+
+  <MapOptimizer
+    name     = "PoseGraphOptimization"
+    ItrNum  = "0"
+    />
+
+  <ToG2OConverter
+    name = "ToG2O"
+    >
+    <Node Tag = "VERTEX_PROX"/>
+    <Odom Tag = "EDGE_SE2"
+      poseRef-InfoGain  = "100 100 0.1"
+      movement-InfoGain = "1 1 0.01"
+      infoLimit         = "10^8 10^8 10^3"
+      />
+    <Loop Tag = "EDGE_SWITCH_PROX"
+      proxSim-InfoGain = "-1"
+      switchInfo       = "0.3"
+      />
+  </ToG2OConverter>
+
+  <ToG2OConverter
+    name = "_ToG2O"
+    >
+    <Node Tag = "VERTEX_PROX"/>
+    <Odom Tag = "EDGE_SE2"
+      poseRef-InfoGain  = "100 100 100"
+      movement-InfoGain = "1 1 1"
+      infoLimit         = "10^8 10^8 10^8"
+      />
+    <Loop Tag = "EDGE_SE2"
+      />
+  </ToG2OConverter>
+  <!--
+    <Loop Tag = "EDGE_M_Est_PROX"
+      proxSimGain = "-1"
+      robustKernel = "Huber"
+      robustKernelDelta = "1"
+      />
+      
+      
+    <Loop Tag = "EDGE_SWITCH_PROX"
+      proxSimGain = "-1"
+      switchInfo  = "0.1"
+      />
+    
+    Node
+      Tag = "VERTEX_PROX"
+            "VERTEX_SE2"
+    Odom
+      Tag = "EDGE_SE2"
+    Loop
+      Tag = "EDGE_SE2"
+            "EDGE_SWITCH_SE2"
+            "EDGE_PROX"
+            "EDGE_SWITCH_PROX"
+            "EDGE_M_Est_PROX"
+    M_Est
+      robustKernel = "Huber"
+                     "Cauchy"
+                     "GemanMcClure"
+  -->
+
+  <ProxMatcher
+    name     = "ProxMatcher"
+    clacSimEqMethod = "LDLT"
+    maxItr = "30"
+    >
+    <Match/>
+  </ProxMatcher>
+
+  <ScanMatcher
+    name     = "ScanMatcher"
+    clacSimEqMethod = "LDLT"
+    verticalRange = "-0.15deg 0.15deg"
+    skip = "1"
+    ignoreRatio = "2"
+    maxItr = "10"
+    >
+    <Match/>
+  </ScanMatcher>
+
+  <MapDirPrepro
+    name     = "MapDirPrepro"
+    clacSimEqMethod = "LDLT"
+    />
+
+  <Provisional name = "Provisional"/>
+
+
+  <SEQUENCE>
+    <task name="OmniaLoad"/>
+    <task name="ToG2O Forward"/>
+    <task name="BeforePGO Save"/>
+    <task name="PoseGraphOptimization"/>
+    <task name="AfterPGO Save"/>
+    <task name="ToG2O Reverse"/>
+    <task name="OmniaSave"/>
+    <!--
+    <task name="OmniaLoad"/>
+    <task name="_ToG2O Forward"/>
+    <task name="BeforePGO Save"/>
+    <task name="PoseGraphOptimization"/>
+    <task name="AfterPGO Save"/>
+    <task name="_ToG2O Reverse"/>
+    <task name="OmniaSave"/>
+    
+    <task name="ScanMatcher"/>
+    <task name="ProxMatcher"/>
+    
+    <task name="PoseGraph Load"/>
+    <task name="PoseGraph Save"/>
+    
+    <task name="for" n="1">
+    </task>    
+    -->
+  </SEQUENCE>
+</setting>
