@@ -4,7 +4,7 @@
     mapNum = "3"
     delim = ","
     loadFormat = "Loc Prox PC Match"
-    MatchFile   = "../data/nc2021_match_.csv"
+    MatchFile   = "../data/nc2021_match.csv"
     PoseRefFile = "../data/nc2021_SM_poseref.csv"
     >
     <Map ID = "1"
@@ -160,6 +160,20 @@
   </ProxMatcher>
 
   <ScanMatcher
+  name     = "ScanMatcher"
+  clacSimEqMethod = "LDLT"
+  heightRange = "0.7 1.0"
+  countSkip = "1"
+  distSkip = "0.5"
+  ignoreRatio = "0.05 0.6"
+  ICPItr = "10"
+  maxItr = "10"
+    >
+    <Match/>
+  </ScanMatcher>
+
+  <!--
+  <ScanMatcher
     name     = "ScanMatcher"
     clacSimEqMethod = "LDLT"
     verticalRange = "-3deg +3deg"
@@ -171,6 +185,7 @@
     >
     <Match/>
   </ScanMatcher>
+  -->
 
   <MapDirPrepro
     name     = "MapDirPrepro"

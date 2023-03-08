@@ -15,7 +15,6 @@ using namespace Scenebuilder;
 
 namespace MapConstructor {
 
-// class Prox
 void Prox::sph_to_xyz() {
 	const real_t theta = spherical[0];
 	const real_t phi = spherical[1];
@@ -38,7 +37,6 @@ void Prox::xyz_to_shp() {
 
 
 
-// class Proxs
 Prox* Proxs::FindById(const int _id) {
 	for (Prox* prox : *this)
 		if (prox->id == _id)
@@ -55,7 +53,6 @@ Prox* Proxs::FindByIndex(const int _index) {
 
 
 
-// class Geo
 void Geo::llh_to_ecef() {
 	const double Clat = cos(llh[0]), Slat = sin(llh[0]);
 	const double chi = sqrt(1. - e2 * Slat * Slat);
@@ -80,7 +77,6 @@ void Geo::enu_to_xyz(const real_t& AngOffset, const vec2_t& PosOffset) {
 
 
 
-// class PointCloud
 Point* PointCloud::FindById(const int _id) {
 	for (Point& point : *this)
 		if (point.id == _id)
@@ -116,8 +112,7 @@ vector<Point*> PointCloud::FindNearest(const vec3_t _pos, int top) {
 
 
 
-// class PC_Loader
-bool PC_Loader::Load(const int& countSkip, const real_t& distSkip, const vec2_t& verticalRange) {
+bool PC_Loader::Load(const int& countSkip, const real_t& distSkip, const vec2_t& heightRange) {
 	ifstream pcFile(fileName);
 	pcFile.seekg(row);
 	pcMemory = new PointCloud;
@@ -142,18 +137,18 @@ bool PC_Loader::Load(const int& countSkip, const real_t& distSkip, const vec2_t&
 		if (flag)
 			break;
 		vec3_t point = vec3_t{ atof(pos_str[0].c_str()), atof(pos_str[1].c_str()), atof(pos_str[2].c_str()) } * 0.001;
-		real_t verticalAngle = atan2(point[2] - 0.8, sqrt(point[0] * point[0] + point[1] * point[1]));
-		if (verticalRange[0] < verticalAngle && verticalAngle < verticalRange[1])
+		//real_t verticalAngle = atan2(point[2] - 0.8, sqrt(point[0] * point[0] + point[1] * point[1]));
+		if (heightRange[0] < point[2] && point[2] < heightRange[1])
 			pcSort.push_back(pair<real_t, vec3_t>(atan2(point[1], point[0]), point));
 		ss.seekg(21 * (countSkip - 1), ios_base::cur);
 	}
 
-	std::sort(pcSort.begin(), pcSort.end());
+	//std::sort(pcSort.begin(), pcSort.end());
 	
 	const real_t sqDistSkip = distSkip * distSkip;
 	for (pair<real_t, vec3_t>& _pcSort : pcSort) {
 		bool flag = false;
-		for (int i = 0; i < 10 && i < pcMemory->size(); i++) {
+		for (int i = 0; i < pcMemory->size(); i++) {
 			//vec2_t diff2D = vec2_t(_pcSort.second[0] - pcMemory->at(pcMemory->size() - i - 1).pos[0],
 			//	                   _pcSort.second[1] - pcMemory->at(pcMemory->size() - i - 1).pos[1]);
 			if ((_pcSort.second - pcMemory->at(pcMemory->size() - i - 1).pos).square() < sqDistSkip) {
@@ -174,7 +169,6 @@ bool PC_Loader::Load(const int& countSkip, const real_t& distSkip, const vec2_t&
 
 
 
-// class Nodes
 Nodes::Nodes(const Nodes& nodes) : vector<UTRef<Node>>(nodes), map(nodes.map) {
 	for (Node* node : *this)
 		node->map = nodes.map;
@@ -203,7 +197,6 @@ Node* Nodes::FindByTime(const int _time) {
 
 
 
-// class Maps
 Map* Maps::FindById(const int _id) {
 	for (Map* map : *this)
 		if (map->id == _id)
@@ -213,7 +206,6 @@ Map* Maps::FindById(const int _id) {
 
 
 
-//class ProxMatch
 ProxMatch::ProxMatch(const ProxMatch& pm) : f(pm.f), t(pm.t), similarity() {
 	this->similarity[0] = pm.similarity[0];
 	this->similarity[1] = pm.similarity[1];
@@ -221,7 +213,6 @@ ProxMatch::ProxMatch(const ProxMatch& pm) : f(pm.f), t(pm.t), similarity() {
 
 
 
-//class ProxMatches
 ProxMatch* ProxMatches::FindByProxs(const Prox* _proxf, const Prox* _proxt) {
 	for (ProxMatch* pm : *this)
 		if ((pm->f == _proxf && pm->t == _proxt) ||
@@ -232,7 +223,6 @@ ProxMatch* ProxMatches::FindByProxs(const Prox* _proxf, const Prox* _proxt) {
 
 
 
-//class LoopMatch
 NodeMatch* LoopMatch::FindByNodes(const Node* _nodef, const Node* _nodet) {
 	for (NodeMatch* nm : *this)
 		if ((nm->f == _nodef && nm->t == _nodet) ||
@@ -243,7 +233,6 @@ NodeMatch* LoopMatch::FindByNodes(const Node* _nodef, const Node* _nodet) {
 
 
 
-//class Matches
 LoopMatch* Matches::FindById(const int _id) {
 	for (LoopMatch* lm : *this)
 		if (lm->id == _id)
@@ -262,7 +251,6 @@ NodeMatch* Matches::FindByNodes(const Node* _nodef, const Node* _nodet) {
 
 
 
-//class TaskBase
 int TaskBase::Task(int argc, const char* argv[]) {
 	std::cout << "Did not match the task." << std::endl;
 	return 0;

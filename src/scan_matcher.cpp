@@ -73,8 +73,7 @@ bool ScanMatcher::CalcJacobi() {
 
 bool ScanMatcher::Update() {
 	Vector3d _Param = Param;
-	const Rotation2Dd Rot(Delta(2));
-	Param.block<2, 1>(0, 0) = Rot * _Param.block<2, 1>(0, 0) + Delta.block<2, 1>(0, 0);
+	Param.block<2, 1>(0, 0) = Rotation2Dd(Delta(2)) * _Param.block<2, 1>(0, 0) + Delta.block<2, 1>(0, 0);
 	Param(2) = _Param(2) + Delta(2);
 	return true;
 }
@@ -128,8 +127,8 @@ int ScanMatching::Task(int argc, const char* argv[]) {
 	setting->Get<int>(maxItr, ".maxItr");
 	real_t distSkip = FLT_MAX;
 	setting->Get<real_t>(distSkip, ".distSkip");
-	vec2_t verticalRange = { -FLT_MAX, FLT_MAX };
-	setting->Get<vec2_t>(verticalRange, ".verticalRange");
+	vec2_t heightRange = { -FLT_MAX, FLT_MAX };
+	setting->Get<vec2_t>(heightRange, ".heightRange");
 	int countSkip = 1;
 	setting->Get<int>(countSkip, ".countSkip");
 	vec2_t ignoreRatio = vec2_t(0., 0.);
@@ -156,8 +155,8 @@ int ScanMatching::Task(int argc, const char* argv[]) {
 			//	<< "     tnode : " << nm.t->map->id << "." << nm.t->count << endl;
 			nm->locMatch.poseRef.clear();
 			nm->locMatch.info.clear();
-			nm->f->pc.Load(countSkip, distSkip, verticalRange);
-			nm->t->pc.Load(countSkip, distSkip, verticalRange);
+			nm->f->pc.Load(countSkip, distSkip, heightRange);
+			nm->t->pc.Load(countSkip, distSkip, heightRange);
 			if (nm->f->pc.pcMemory->size() < 10 || nm->t->pc.pcMemory->size() < 10) {
 				nm->f->pc.Release();
 				nm->t->pc.Release();
@@ -165,24 +164,40 @@ int ScanMatching::Task(int argc, const char* argv[]) {
 			}
 
 			ScanMatcher sm(nm->t->pc.pcMemory->size(), clacSimEqMethod, _ignoreRatio);
-			sm.pc[0] = nm->f->pc.pcMemory;
-			sm.pc[1] = nm->t->pc.pcMemory;
+			ScanMatcher rsm(nm->f->pc.pcMemory->size(), clacSimEqMethod, _ignoreRatio);
+			sm.pc[0] = rsm.pc[1] = nm->f->pc.pcMemory;
+			sm.pc[1] = rsm.pc[0] = nm->t->pc.pcMemory;
 			sm.pos_reff = pos_reff;
 			sm.ang_reff = ang_reff;
-			sm.maxItr = maxItr;
+			sm.maxItr = rsm.maxItr = maxItr;
 			bool flag = true;
 			for (int i = 0; i < ICPItr; i++) {
-				sm.Init();
-				if (sm.Loop() != 1) {
-					flag = false;
-					break;
+				if (i % 2 == 0) {
+					sm.Init();
+					if (sm.Loop() != 1) {
+						flag = false;
+						break;
+					}
+					sm.pos_reff = Vector2d(sm.getParam()(0), sm.getParam()(1));
+					sm.ang_reff = sm.getParam()(2);
+					rsm.pos_reff = Rotation2Dd(-sm.ang_reff) * (-sm.pos_reff);
+					rsm.ang_reff = -sm.ang_reff;
 				}
-				sm.pos_reff = Vector2d(sm.getParam()(0), sm.getParam()(1));
-				sm.ang_reff = sm.getParam()(2);
+				else {
+					rsm.Init();
+					if (rsm.Loop() != 1) {
+						flag = false;
+						break;
+					}
+					rsm.pos_reff = Vector2d(rsm.getParam()(0), rsm.getParam()(1));
+					rsm.ang_reff = rsm.getParam()(2);
+					sm.pos_reff = Rotation2Dd(-rsm.ang_reff) * (-rsm.pos_reff);
+					sm.ang_reff = -rsm.ang_reff;
+				}
 			}
 			if(flag) {
-				pos_reff = sm.pos_reff = Vector2d(sm.getParam()(0), sm.getParam()(1));
-				ang_reff = sm.ang_reff = sm.getParam()(2);
+				pos_reff = sm.pos_reff;
+				ang_reff = sm.ang_reff;
 				Eigen::Matrix3d hessi = sm.getH();
 				nm->locMatch.poseRef.Pos() = vec3_t(sm.pos_reff.x(), sm.pos_reff.y(), 0.);
 				nm->locMatch.poseRef.Ori() = FromRollPitchYaw(vec3_t(0., 0., sm.ang_reff));
@@ -192,16 +207,16 @@ int ScanMatching::Task(int argc, const char* argv[]) {
 						nm->locMatch.info[index[i]][index[j]] = hessi(i, j);
 			}
 
-			ofstream of;
-			of.open("../test.csv");
-			of << pos_reff[0] << ", " << pos_reff[1] << ", " << ang_reff << endl;
-			of << endl << endl << endl;
-			for (Point& point : *nm->f->pc.pcMemory)
-				of << point.pos.X() << ", " << point.pos.Y() << ", " << point.pos.Z() << endl;
-			of << endl << endl << endl;
-			for (Point& point : *nm->t->pc.pcMemory)
-				of << point.pos.X() << ", " << point.pos.Y() << ", " << point.pos.Z() << endl;
-			of.close();
+			//ofstream of;
+			//of.open("../test.csv");
+			//of << pos_reff[0] << ", " << pos_reff[1] << ", " << ang_reff << endl;
+			//of << endl << endl << endl;
+			//for (Point& point : *nm->f->pc.pcMemory)
+			//	of << point.pos.X() << ", " << point.pos.Y() << ", " << point.pos.Z() << endl;
+			//of << endl << endl << endl;
+			//for (Point& point : *nm->t->pc.pcMemory)
+			//	of << point.pos.X() << ", " << point.pos.Y() << ", " << point.pos.Z() << endl;
+			//of.close();
 
 			nm->f->pc.Release();
 			nm->t->pc.Release();
