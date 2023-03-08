@@ -1,9 +1,9 @@
-<nc2021>
+<geo_convert>
   <MapLoader
     name = "GeoLoad"
     mapNum = "3"
     delim = ","
-    timeScale = "500"
+    timeStep = "500"
     loadFormat = "Geo"
     >
     <Map ID = "1"
@@ -46,4 +46,4 @@
     <task name="GeoLoad"/>
     <task name="LocGeoSave"/>
   </SEQUENCE>
-</nc2021>
+</geo_convert>

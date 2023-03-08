@@ -1,6 +1,6 @@
 <setting>
   <MapLoader
-    name = "OmniaLoad"
+    name = "MapLoad"
     mapNum = "4"
     delim = ","
     loadFormat = "Loc Prox Match"
@@ -34,7 +34,7 @@
   </MapLoader>
 
   <MapSaver
-    name = "OmniaSave"
+    name = "MapSave"
     mapNum = "4"
     saveFormat = "Loc AbsProx LocMatch AbsProxMatch"
     MatchFile        = "../data/nc2022_SPROX_match.csv"
@@ -174,21 +174,21 @@
 
 
   <SEQUENCE>
-    <task name="OmniaLoad"/>
+    <task name="MapLoad"/>
     <task name="ToG2O Forward"/>
     <task name="BeforePGO Save"/>
     <task name="PoseGraphOptimization"/>
     <task name="AfterPGO Save"/>
     <task name="ToG2O Reverse"/>
-    <task name="OmniaSave"/>
+    <task name="MapSave"/>
     <!--
-    <task name="OmniaLoad"/>
+    <task name="MapLoad"/>
     <task name="_ToG2O Forward"/>
     <task name="BeforePGO Save"/>
     <task name="PoseGraphOptimization"/>
     <task name="AfterPGO Save"/>
     <task name="_ToG2O Reverse"/>
-    <task name="OmniaSave"/>
+    <task name="MapSave"/>
     
     <task name="ScanMatcher"/>
     <task name="ProxMatcher"/>

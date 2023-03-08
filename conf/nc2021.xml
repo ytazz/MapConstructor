@@ -1,10 +1,10 @@
 <nc2021>
   <MapLoader
-    name = "OmniaLoad"
+    name = "MapLoad"
     mapNum = "3"
     delim = ","
-    loadFormat = "Loc Prox Match"
-    MatchFile   = "../data/nc2021_match.csv"
+    loadFormat = "Loc Prox PC Match"
+    MatchFile   = "../data/nc2021_match_.csv"
     PoseRefFile = "../data/nc2021_SM_poseref.csv"
     >
     <Map ID = "1"
@@ -28,7 +28,7 @@
   </MapLoader>
 
   <MapSaver
-    name = "OmniaSave"
+    name = "MapSave"
     mapNum = "3"
     saveFormat = "Loc AbsProx LocMatch AbsProxMatch"
     MatchFile        = "../data/nc2021_SPROX_match.csv"
@@ -54,6 +54,17 @@
       AbsProxFile  = "../data/nc2021_D_SPROX_absprox.csv"
       MovementFile = "../data/nc2021_D_movement.csv"
       />
+  </MapSaver>
+
+  <MapSaver
+    name = "PoseRefSave"
+    mapNum = "3"
+    saveFormat = "PoseRef"
+    PoseRefFile      = "../data/nc2021_SM_poseref.csv"
+    >
+    <Map ID = "1" />
+    <Map ID = "2" />
+    <Map ID = "3" />
   </MapSaver>
 
   <G2OFileIO
@@ -83,7 +94,7 @@
     <Node Tag = "VERTEX_PROX"/>
     <Odom Tag = "EDGE_SE2"
       poseRef-InfoGain  = "100 100 1"
-      movement-InfoGain = "1 1 0.01"
+      movement-InfoGain = "1 1 1"
       infoLimit         = "10^8 10^8 10^3"
       />
     <Loop Tag = "EDGE_SWITCH_PROX"
@@ -99,9 +110,10 @@
     <Odom Tag = "EDGE_SE2"
       poseRef-InfoGain  = "100 100 100"
       movement-InfoGain = "1 1 1"
-      infoLimit         = "10^8 10^8 10^8"
+      infoLimit         = "10^8 10^8 10^3"
       />
-    <Loop Tag = "EDGE_SE2"
+    <Loop Tag = "EDGE_SWITCH_SE2"
+      switchInfo       = "0.2"
       />
   </ToG2OConverter>
   <!--
@@ -150,10 +162,12 @@
   <ScanMatcher
     name     = "ScanMatcher"
     clacSimEqMethod = "LDLT"
-    verticalRange = "-0.15deg 0.15deg"
-    skip = "1"
-    ignoreRatio = "2"
-    maxItr = "10"
+    verticalRange = "-3deg +3deg"
+    countSkip = "1"
+    distSkip = "1"
+    ignoreRatio = "0.1 0.6"
+    ICPItr = "5"
+    maxItr = "5"
     >
     <Match/>
   </ScanMatcher>
@@ -167,23 +181,24 @@
   
   
   <SEQUENCE>
-    <task name="OmniaLoad"/>
-    <task name="ToG2O Forward"/>
-    <task name="BeforePGO Save"/>
-    <task name="PoseGraphOptimization"/>
-    <task name="AfterPGO Save"/>
-    <task name="ToG2O Reverse"/>
-    <task name="OmniaSave"/>
-    <!--
-    <task name="OmniaLoad"/>
+    <task name="MapLoad"/>
+    <task name="ScanMatcher"/>
+    <task name="PoseRefSave"/>
     <task name="_ToG2O Forward"/>
     <task name="BeforePGO Save"/>
     <task name="PoseGraphOptimization"/>
     <task name="AfterPGO Save"/>
     <task name="_ToG2O Reverse"/>
-    <task name="OmniaSave"/>
+    <task name="MapSave"/>
+    <!--
+    <task name="MapLoad"/>
+    <task name="ToG2O Forward"/>
+    <task name="BeforePGO Save"/>
+    <task name="PoseGraphOptimization"/>
+    <task name="AfterPGO Save"/>
+    <task name="ToG2O Reverse"/>
+    <task name="MapSave"/>
     
-    <task name="ScanMatcher"/>
     <task name="ProxMatcher"/>
     
     <task name="PoseGraph Load"/>

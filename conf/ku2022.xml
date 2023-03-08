@@ -1,6 +1,6 @@
 <setting>
   <MapLoader
-    name = "OmniaLoad"
+    name = "MapLoad"
     mapNum = "6"
     delim = ","
     loadFormat = "Loc Prox Match"
@@ -20,7 +20,7 @@
   </MapLoader>
 
   <MapSaver
-    name = "OmniaSave"
+    name = "MapSave"
     mapNum = "6"
     saveFormat = "Loc AbsProx LocMatch AbsProxMatch"
     LocMatchFile              = "../data/ku2022_SPROX_locmatch.csv"
@@ -109,14 +109,14 @@
     />  
   
   <SEQUENCE>
-    <task name="OmniaLoad"/>
+    <task name="MapLoad"/>
     <task name="MapDirPrepro"/>
     <task name="ToG2O Forward"/>
     <task name="BeforePGO Save"/>
     <task name="PoseGraphOptimization"/>
     <task name="AfterPGO Save"/>
     <task name="ToG2O Reverse"/>
-    <task name="OmniaSave"/>
+    <task name="MapSave"/>
     <!--
     
     <task name="PoseGraph Load"/>

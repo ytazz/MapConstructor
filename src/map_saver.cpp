@@ -25,13 +25,13 @@ bool MapSaver::LocSaver(int mapID) {
 	saveFile << "count, time, "
 		<< "location_pos_x, location_pos_y, location_pos_z, "
 		<< "location_roll, location_pitch, location_yaw, " << endl;
-	for (Node& node : map->nodes) {
-		vec3_t rpy = ToRollPitchYaw(node.location.pose.Ori());
-		saveFile << node.count << ", "
-			<< node.time << ", "
-			<< FIXEDFLT(node.location.pose.Pos().X(), 6, 3) << ", "
-			<< FIXEDFLT(node.location.pose.Pos().Y(), 6, 3) << ", "
-			<< FIXEDFLT(node.location.pose.Pos().Z(), 6, 3) << ", "
+	for (Node* node : map->nodes) {
+		vec3_t rpy = ToRollPitchYaw(node->location.pose.Ori());
+		saveFile << node->count << ", "
+			<< node->time << ", "
+			<< FIXEDFLT(node->location.pose.Pos().X(), 6, 3) << ", "
+			<< FIXEDFLT(node->location.pose.Pos().Y(), 6, 3) << ", "
+			<< FIXEDFLT(node->location.pose.Pos().Z(), 6, 3) << ", "
 			<< FIXEDFLT(rpy.X(), 6, 3) << ", "
 			<< FIXEDFLT(rpy.Y(), 6, 3) << ", "
 			<< FIXEDFLT(rpy.Z(), 6, 3) << ", " << endl;
@@ -46,22 +46,22 @@ bool MapSaver::MovementSaver(int mapID) {
 	saveFile << "count, time, "
 		<< "movement_pos_x, movement_pos_y, movement_pos_z, "
 		<< "movement_roll, movement_pitch, movement_yaw, info, " << endl;
-	for (Node& node : map->nodes) {
-		if (node.movement.prevNode == nullptr
-			|| node.movement.poseRef == (vec3_t(NAN, NAN, NAN), quat_t(NAN, NAN, NAN, NAN)))
+	for (Node* node : map->nodes) {
+		if (node->movement.prevNode == nullptr
+			|| node->movement.poseRef == (vec3_t(NAN, NAN, NAN), quat_t(NAN, NAN, NAN, NAN)))
 			continue;
-		vec3_t rpy = ToRollPitchYaw(node.movement.poseRef.Ori());
-		saveFile << node.count << ", "
-			<< node.time << ", "
-			<< FIXEDFLT(node.movement.poseRef.Pos().X(), 6, 3) << ", "
-			<< FIXEDFLT(node.movement.poseRef.Pos().Y(), 6, 3) << ", "
-			<< FIXEDFLT(node.movement.poseRef.Pos().Z(), 6, 3) << ", "
+		vec3_t rpy = ToRollPitchYaw(node->movement.poseRef.Ori());
+		saveFile << node->count << ", "
+			<< node->time << ", "
+			<< FIXEDFLT(node->movement.poseRef.Pos().X(), 6, 3) << ", "
+			<< FIXEDFLT(node->movement.poseRef.Pos().Y(), 6, 3) << ", "
+			<< FIXEDFLT(node->movement.poseRef.Pos().Z(), 6, 3) << ", "
 			<< FIXEDFLT(rpy.X(), 6, 3) << ", "
 			<< FIXEDFLT(rpy.Y(), 6, 3) << ", "
 			<< FIXEDFLT(rpy.Z(), 6, 3) << ", ";
 		for (int i = 0; i < 6; i++)
 			for (int j = i; j < 6; j++)
-				saveFile << FIXEDFLT((node.movement.info[i][j] + node.movement.info[j][i]) * 0.5, 6, 3) << ", ";
+				saveFile << FIXEDFLT((node->movement.info[i][j] + node->movement.info[j][i]) * 0.5, 6, 3) << ", ";
 		saveFile << endl;
 	}
 	return true;
@@ -74,17 +74,17 @@ bool MapSaver::ProxSaver(int mapID) {
 	saveFile << "count, time, nprox, "
 		<< "proximity_id, proximity_duration, proximity_velocity, "
 		<< "proximity_theta, proximity_phi, proximity_distance, " << endl;
-	for (Node& node : map->nodes) {
-		saveFile << node.count << ", "
-			<< node.time << ", "
-			<< node.proximities.size() << ", ";
-		for (Prox& prox : node.proximities)
-			saveFile << prox.id << ", "
-				<< prox.duration << ", "
-				<< FIXEDFLT(prox.velocity, 6, 3) << ", "
-				<< FIXEDFLT(prox.spherical[0], 6, 3) << ", "
-				<< FIXEDFLT(prox.spherical[1], 6, 3) << ", "
-				<< FIXEDFLT(prox.spherical[2], 6, 3) << ", ";
+	for (Node* node : map->nodes) {
+		saveFile << node->count << ", "
+			<< node->time << ", "
+			<< node->proximities.size() << ", ";
+		for (Prox* prox : node->proximities)
+			saveFile << prox->id << ", "
+				<< prox->duration << ", "
+				<< FIXEDFLT(prox->velocity, 6, 3) << ", "
+				<< FIXEDFLT(prox->spherical[0], 6, 3) << ", "
+				<< FIXEDFLT(prox->spherical[1], 6, 3) << ", "
+				<< FIXEDFLT(prox->spherical[2], 6, 3) << ", ";
 		saveFile << endl;
 	}
 	return true;
@@ -97,18 +97,18 @@ bool MapSaver::GeoSaver(int mapID) {
 	saveFile << "count, time, "
 		<< "geo_lat, geo_lon, geo_alt, "
 		<< "geo_tim, geo_sat, geo_quality, , " << endl;
-	for (Node& node : map->nodes) {
-		if (node.geography.llh == vec3_t()
-			|| node.geography.numSat < minSatNum || node.geography.quality < minQuality)
+	for (Node* node : map->nodes) {
+		if (node->geography.llh == vec3_t()
+			|| node->geography.numSat < minSatNum || node->geography.quality < minQuality)
 			continue;
-		saveFile << node.geography.geoCount << ", "
-			<< node.time << ", "
-			<< FIXEDFLT(R2D * node.geography.llh[0], 0, 6) << ", "
-			<< FIXEDFLT(R2D * node.geography.llh[1], 0, 6) << ", "
-			<< FIXEDFLT(node.geography.llh[2], 0, 6) << ", "
-			<< node.geography.utcTime << ", "
-			<< node.geography.numSat << ", "
-			<< node.geography.quality << ", " << endl;
+		saveFile << node->geography.geoCount << ", "
+			<< node->time << ", "
+			<< FIXEDFLT(R2D * node->geography.llh[0], 0, 6) << ", "
+			<< FIXEDFLT(R2D * node->geography.llh[1], 0, 6) << ", "
+			<< FIXEDFLT(node->geography.llh[2], 0, 6) << ", "
+			<< node->geography.utcTime << ", "
+			<< node->geography.numSat << ", "
+			<< node->geography.quality << ", " << endl;
 	}
 	return true;
 }
@@ -117,26 +117,26 @@ bool MapSaver::MatchSaver() {
 	saveFile << "map1, count1, time1, map2, count2, time2, "
 		<< "match_id, match_size, match_score, match_reverse, match_nprox, "
 		<< "prox1_id, prox2_id, similarity1, similarity2, " << endl;
-	for (LoopMatch& lm :* matches)
-		for (NodeMatch& nm : lm) {
-			if (!nm.proxMatches.size())
+	for (LoopMatch* lm : *matches)
+		for (NodeMatch* nm : *lm) {
+			if (!nm->proxMatches.size())
 				continue;
-			saveFile << nm.f->map->id << ", "
-				<< nm.f->count << ", "
-				<< nm.f->time << ", "
-				<< nm.t->map->id << ", "
-				<< nm.t->count << ", "
-				<< nm.t->time << ", "
-				<< lm.id << ", "
-				<< lm.size() << ", "
-				<< lm.score << ", "
-				<< lm.reverse << ", "
-				<< nm.proxMatches.size() << ", ";
-			for (ProxMatch& pm : nm.proxMatches)
-				saveFile << pm.f->id << ", "
-					<< pm.t->id << ", "
-					<< pm.similarity[0] << ", "
-					<< pm.similarity[1] << ", ";
+			saveFile << nm->f->map->id << ", "
+				<< nm->f->count << ", "
+				<< nm->f->time << ", "
+				<< nm->t->map->id << ", "
+				<< nm->t->count << ", "
+				<< nm->t->time << ", "
+				<< lm->id << ", "
+				<< lm->size() << ", "
+				<< lm->score << ", "
+				<< lm->reverse << ", "
+				<< nm->proxMatches.size() << ", ";
+			for (ProxMatch* pm : nm->proxMatches)
+				saveFile << pm->f->id << ", "
+					<< pm->t->id << ", "
+					<< pm->similarity[0] << ", "
+					<< pm->similarity[1] << ", ";
 			saveFile << endl;
 		}
 	return true;
@@ -147,29 +147,29 @@ bool MapSaver::PoseRefSaver() {
 		<< "match_id, match_size, match_score, match_reverse, "
 		<< "pose_ref_pos_x, pose_ref_pos_y, pose_ref_pos_z, "
 		<< "pose_ref_roll, pose_ref_pitch, pose_ref_yaw, info, " << endl;
-	for (LoopMatch& lm : *matches)
-		for (NodeMatch& nm : lm) {
-			if (nm.locMatch.poseRef == (vec3_t(NAN, NAN, NAN), quat_t(NAN, NAN, NAN, NAN)))
+	for (LoopMatch* lm : *matches)
+		for (NodeMatch* nm : *lm) {
+			if (nm->locMatch.poseRef == (vec3_t(NAN, NAN, NAN), quat_t(NAN, NAN, NAN, NAN)))
 				continue;
-			vec3_t rpy = ToRollPitchYaw(nm.locMatch.poseRef.Ori());
-			saveFile << nm.f->map->id << ", "
-				<< nm.f->count << ", "
-				<< nm.f->time << ", "
-				<< nm.t->map->id << ", "
-				<< nm.t->count << ", "
-				<< nm.t->time << ", "
-				<< lm.id << ", "
-				<< lm.size() << ", "
-				<< lm.reverse << ", "
-				<< nm.locMatch.poseRef.Pos().X() << ", "
-				<< nm.locMatch.poseRef.Pos().Y() << ", "
-				<< nm.locMatch.poseRef.Pos().Z() << ", "
+			vec3_t rpy = ToRollPitchYaw(nm->locMatch.poseRef.Ori());
+			saveFile << nm->f->map->id << ", "
+				<< nm->f->count << ", "
+				<< nm->f->time << ", "
+				<< nm->t->map->id << ", "
+				<< nm->t->count << ", "
+				<< nm->t->time << ", "
+				<< lm->id << ", "
+				<< lm->size() << ", "
+				<< lm->reverse << ", "
+				<< nm->locMatch.poseRef.Pos().X() << ", "
+				<< nm->locMatch.poseRef.Pos().Y() << ", "
+				<< nm->locMatch.poseRef.Pos().Z() << ", "
 				<< FIXEDFLT(rpy.X(), 6, 3) << ", "
 				<< FIXEDFLT(rpy.Y(), 6, 3) << ", "
 				<< FIXEDFLT(rpy.Z(), 6, 3) << ", ";
 			for (int i = 0; i < 6; i++)
 				for (int j = i; j < 6; j++)
-					saveFile << FIXEDFLT((nm.locMatch.info[i][j] + nm.locMatch.info[j][i]) * 0.5, 6, 3) << ", ";
+					saveFile << FIXEDFLT((nm->locMatch.info[i][j] + nm->locMatch.info[j][i]) * 0.5, 6, 3) << ", ";
 			saveFile << endl;
 		}
 	return true;
@@ -181,11 +181,11 @@ bool MapSaver::AbsProxSaver(int mapID) {
 		return false;
 	saveFile << "count, time, "
 		<< "abs_prox_x, abs_prox_y, abs_prox_z, " << endl;
-	for (Node& node : map->nodes) {
-		for (Prox& prox : node.proximities) {
-			const vec3_t absProx = node.location.pose * prox.pos;
-			saveFile << node.count << ", "
-				<< node.time << ", "
+	for (Node* node : map->nodes) {
+		for (Prox* prox : node->proximities) {
+			const vec3_t absProx = node->location.pose * prox->pos;
+			saveFile << node->count << ", "
+				<< node->time << ", "
 				<< FIXEDFLT(absProx.X(), 6, 3) << ", "
 				<< FIXEDFLT(absProx.Y(), 6, 3) << ", "
 				<< FIXEDFLT(absProx.Z(), 6, 3) << ", " << endl;
@@ -205,21 +205,21 @@ bool MapSaver::LocGeoSaver(int mapID) {
 	saveFile << "count, time, "
 		<< "location_pos_x, location_pos_y, location_pos_z, "
 		<< "geo_tim, geo_sat, geo_quality, , " << endl;
-	for (Node& node : map->nodes) {
-		if (node.geography.llh == vec3_t()
-			|| node.geography.numSat < minSatNum || node.geography.quality < minQuality)
+	for (Node* node : map->nodes) {
+		if (node->geography.llh == vec3_t()
+			|| node->geography.numSat < minSatNum || node->geography.quality < minQuality)
 			continue;
-		node.geography.llh_to_ecef();
-		node.geography.ecef_to_enu(OrigNode.geography);
-		node.geography.enu_to_xyz(AngOffset, PosOffset);
-		saveFile << node.geography.geoCount << ", "
-			<< node.time << ", "
-			<< FIXEDFLT(node.geography.xyz.X(), 6, 3) << ", "
-			<< FIXEDFLT(node.geography.xyz.Y(), 6, 3) << ", "
-			<< FIXEDFLT(node.geography.xyz.Z(), 6, 3) << ", "
-			<< node.geography.utcTime << ", "
-			<< node.geography.numSat << ", "
-			<< node.geography.quality << ", " << endl;
+		node->geography.llh_to_ecef();
+		node->geography.ecef_to_enu(OrigNode.geography);
+		node->geography.enu_to_xyz(AngOffset, PosOffset);
+		saveFile << node->geography.geoCount << ", "
+			<< node->time << ", "
+			<< FIXEDFLT(node->geography.xyz.X(), 6, 3) << ", "
+			<< FIXEDFLT(node->geography.xyz.Y(), 6, 3) << ", "
+			<< FIXEDFLT(node->geography.xyz.Z(), 6, 3) << ", "
+			<< node->geography.utcTime << ", "
+			<< node->geography.numSat << ", "
+			<< node->geography.quality << ", " << endl;
 	}
 	return true;
 }
@@ -228,25 +228,25 @@ bool MapSaver::LocMatchSaver() {
 	saveFile << "mapID, count, time, "
 		<< "location_pos_x, location_pos_y, location_pos_z, "
 		<< "location_roll, location_pitch, location_yaw, " << endl << endl;
-	for (LoopMatch& lm : *matches)
-		for (NodeMatch& nm : lm) {
-			vec3_t rpy = ToRollPitchYaw(nm.f->location.pose.Ori());
-			saveFile << nm.f->map->id << ", "
-				<< nm.f->count << ", "
-				<< nm.f->time << ", "
-				<< FIXEDFLT(nm.f->location.pose.Pos().X(), 6, 3) << ", "
-				<< FIXEDFLT(nm.f->location.pose.Pos().Y(), 6, 3) << ", "
-				<< FIXEDFLT(nm.f->location.pose.Pos().Z(), 6, 3) << ", "
+	for (LoopMatch* lm : *matches)
+		for (NodeMatch* nm : *lm) {
+			vec3_t rpy = ToRollPitchYaw(nm->f->location.pose.Ori());
+			saveFile << nm->f->map->id << ", "
+				<< nm->f->count << ", "
+				<< nm->f->time << ", "
+				<< FIXEDFLT(nm->f->location.pose.Pos().X(), 6, 3) << ", "
+				<< FIXEDFLT(nm->f->location.pose.Pos().Y(), 6, 3) << ", "
+				<< FIXEDFLT(nm->f->location.pose.Pos().Z(), 6, 3) << ", "
 				<< FIXEDFLT(rpy.X(), 6, 3) << ", "
 				<< FIXEDFLT(rpy.Y(), 6, 3) << ", "
 				<< FIXEDFLT(rpy.Z(), 6, 3) << ", " << endl;
-			rpy = ToRollPitchYaw(nm.t->location.pose.Ori());
-			saveFile << nm.t->map->id << ", "
-				<< nm.t->count << ", "
-				<< nm.t->time << ", "
-				<< FIXEDFLT(nm.t->location.pose.Pos().X(), 6, 3) << ", "
-				<< FIXEDFLT(nm.t->location.pose.Pos().Y(), 6, 3) << ", "
-				<< FIXEDFLT(nm.t->location.pose.Pos().Z(), 6, 3) << ", "
+			rpy = ToRollPitchYaw(nm->t->location.pose.Ori());
+			saveFile << nm->t->map->id << ", "
+				<< nm->t->count << ", "
+				<< nm->t->time << ", "
+				<< FIXEDFLT(nm->t->location.pose.Pos().X(), 6, 3) << ", "
+				<< FIXEDFLT(nm->t->location.pose.Pos().Y(), 6, 3) << ", "
+				<< FIXEDFLT(nm->t->location.pose.Pos().Z(), 6, 3) << ", "
 				<< FIXEDFLT(rpy.X(), 6, 3) << ", "
 				<< FIXEDFLT(rpy.Y(), 6, 3) << ", "
 				<< FIXEDFLT(rpy.Z(), 6, 3) << ", " << endl << endl;
@@ -257,22 +257,22 @@ bool MapSaver::LocMatchSaver() {
 bool MapSaver::AbsProxMatchSaver() {
 	saveFile << "mapID, count, time, "
 		<< "abs_prox_x, abs_prox_y, abs_prox_z, " << endl << endl;
-	for (LoopMatch& lm : *matches)
-		for (NodeMatch& nm : lm) {
-			if (!nm.proxMatches.size())
+	for (LoopMatch* lm : *matches)
+		for (NodeMatch* nm : *lm) {
+			if (!nm->proxMatches.size())
 				continue;
-			for (ProxMatch& pm : nm.proxMatches) {
-				vec3_t absProx = nm.f->location.pose * pm.f->pos;
-				saveFile << nm.f->map->id << ", "
-					<< nm.f->count << ", "
-					<< nm.f->time << ", "
+			for (ProxMatch* pm : nm->proxMatches) {
+				vec3_t absProx = nm->f->location.pose * pm->f->pos;
+				saveFile << nm->f->map->id << ", "
+					<< nm->f->count << ", "
+					<< nm->f->time << ", "
 					<< FIXEDFLT(absProx.X(), 6, 3) << ", "
 					<< FIXEDFLT(absProx.Y(), 6, 3) << ", "
 					<< FIXEDFLT(absProx.Z(), 6, 3) << ", " << endl;
-				absProx = nm.t->location.pose * pm.t->pos;
-				saveFile << nm.t->map->id << ", "
-					<< nm.t->count << ", "
-					<< nm.t->time << ", "
+				absProx = nm->t->location.pose * pm->t->pos;
+				saveFile << nm->t->map->id << ", "
+					<< nm->t->count << ", "
+					<< nm->t->time << ", "
 					<< FIXEDFLT(absProx.X(), 6, 3) << ", "
 					<< FIXEDFLT(absProx.Y(), 6, 3) << ", "
 					<< FIXEDFLT(absProx.Z(), 6, 3) << ", " << endl << endl;
@@ -309,6 +309,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 		catch (...) { continue; };
 		cout << "mapID : " << i + 1 << " - Save : ";
 
+		filename = "";
 		for (string form : format)
 			if (form == "Loc") {
 				MapSetting->Get<string>(filename, ".LocFile");
@@ -321,6 +322,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 				break;
 			}
 
+		filename = "";
 		for (string form : format)
 			if (form == "Movement") {
 				MapSetting->Get<string>(filename, ".MovementFile");
@@ -333,6 +335,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 				break;
 			}
 
+		filename = "";
 		for (string form : format)
 			if (form == "Prox") {
 				MapSetting->Get<string>(filename, ".ProxFile");
@@ -345,6 +348,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 				break;
 			}
 
+		filename = "";
 		for (string form : format)
 			if (form == "Geo") {
 				MapSetting->Get<string>(filename, ".GeoFile");
@@ -357,6 +361,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 				break;
 			}
 
+		filename = "";
 		for (string form : format)
 			if (form == "AbsProx") {
 				MapSetting->Get<string>(filename, ".AbsProxFile");
@@ -369,6 +374,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 				break;
 			}
 
+		filename = "";
 		for (string form : format)
 			if (form == "LocGeo") {
 				MapSetting->Get<string>(filename, ".LocGeoFile");
@@ -386,6 +392,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 
 	cout << "Loop - Save : ";
 
+	filename = "";
 	for (string form : format)
 		if (form == "Match") {
 			setting->Get<string>(filename, ".MatchFile");
@@ -398,6 +405,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 			break;
 		}
 
+	filename = "";
 	for (string form : format)
 		if (form == "PoseRef") {
 			setting->Get<string>(filename, ".PoseRefFile");
@@ -410,6 +418,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 			break;
 		}
 
+	filename = "";
 	for (string form : format)
 		if (form == "LocMatch") {
 			setting->Get<string>(filename, ".LocMatchFile");
@@ -422,6 +431,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 			break;
 		}
 
+	filename = "";
 	for (string form : format)
 		if (form == "AbsProxMatch") {
 			setting->Get<string>(filename, ".AbsProxMatchFile");

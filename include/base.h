@@ -51,7 +51,7 @@ public:
 	Loc() : Loc(nullptr) {}
 };
 
-class Prox {
+class Prox : public UTRefCount {
 public:
 	vec3_t pos;
 	int index;
@@ -66,13 +66,11 @@ public:
 	void xyz_to_shp();
 };
 
-class Proxs : public vector<Prox> {
+class Proxs : public vector<UTRef<Prox>> {
 public:
 	Node* node;
-	Proxs(Node* _node) : vector<Prox>(), node(_node) {}
+	Proxs(Node* _node) : vector<UTRef<Prox>>(), node(_node) {}
 	Proxs() : Proxs(nullptr) {}
-	Proxs(const Proxs& proxs);
-	Proxs(const Proxs& proxs, Node* _node);
 	Prox* FindById(const int _id);
 	Prox* FindByIndex(const int _index);
 };
@@ -117,7 +115,7 @@ public:
 	Node* node;
 	PC_Loader(Node* _node) : pcMemory(nullptr), fileName(), delim(","), row(ios_base::beg), node(_node) {}
 	PC_Loader() : PC_Loader(nullptr) {}
-	bool Load(const int& skip = 1, const vec2_t& verticalRange = {-FLT_MAX, FLT_MAX });
+	bool Load(const int& countSkip = 1, const real_t& distSkip = FLT_MAX, const vec2_t& verticalRange = {-FLT_MAX, FLT_MAX });
 	bool Release() { delete pcMemory; return true; };
 };
 
@@ -133,7 +131,7 @@ public:
 	Movement() : Movement(nullptr) {}
 };
 
-class Node {
+class Node : public UTRefCount {
 public:
 	int index;
 	int count;
@@ -147,43 +145,32 @@ public:
 	OptimizableGraph::Vertex* vertex;
 	Map* map;
 	Node(Map* _map) : index(-1), count(-1), time(-1),
-		location(this), proximities(this), geography(this), movement(this),
+		location(this), proximities(this), geography(this), movement(this), pc(this), 
 		vertex(nullptr), map(_map) {}
 	Node() : Node(nullptr) {}
-	Node(const Node& node) : index(node.index), count(node.count), time(node.time),
-		location(node.location), proximities(node.proximities), geography(node.geography), movement(node.movement), pc(node.pc),
-		vertex(node.vertex), map(node.map) {
-		location.node = this;
-		proximities.node = this;
-		geography.node = this;
-		movement.node = this;
-		pc.node = this;
-	}
 };
 
-class Nodes : public vector<Node> {
+class Nodes : public vector<UTRef<Node>> {
 public:
 	Map* map;
-	Nodes(Map* _map) : vector<Node>(), map(_map) {}
+	Nodes(Map* _map) : vector<UTRef<Node>>(), map(_map) {}
 	Nodes() : Nodes(nullptr) {}
 	Nodes(const Nodes& nodes);
-	Nodes(const Nodes& nodes, Map* _map);
 	Node* FindByIndex(const int _index);
 	Node* FindByCount(const int _count);
 	Node* FindByTime(const int _time);
 };
 
-class Map {
+class Map : public UTRefCount {
 public:
 	int id;
 	Nodes nodes;
 	Map() : id(-1), nodes(this) {}
-	Map(const Map& _map) : id(_map.id), nodes(_map.nodes, this) {}
 };
 
-class Maps : public vector<Map> {
+class Maps : public vector<UTRef<Map>> {
 public:
-	Maps() : vector<Map>() {}
+	Maps() : vector<UTRef<Map>>() {}
 	Map* FindById(const int _id);
 };
 
@@ -195,7 +182,7 @@ public:
 	LocMatch() : poseRef(vec3_t(NAN, NAN, NAN), quat_t(NAN, NAN, NAN, NAN)), info(), loop(nullptr, nullptr) {}
 };
 
-class ProxMatch {
+class ProxMatch : public UTRefCount {
 public:
 	Prox* f;
 	Prox* t;
@@ -205,34 +192,34 @@ public:
 	ProxMatch(const ProxMatch& pm);
 };
 
-class ProxMatches : public vector<ProxMatch> {
+class ProxMatches : public vector<UTRef<ProxMatch>> {
 public:
-	ProxMatches() : vector<ProxMatch>() {}
+	ProxMatches() : vector<UTRef<ProxMatch>>() {}
 	ProxMatch* FindByProxs(const Prox* _proxf, const Prox* _proxt);
 };
 
-class NodeMatch {
+class NodeMatch : public UTRefCount {
 public:
 	Node* f;
 	Node* t;
 	LocMatch locMatch;
 	ProxMatches proxMatches;
 	NodeMatch(Node* _f, Node* _t) : f(_f), t(_t), locMatch(), proxMatches() {}
-	bool ProxMatcher();
+	//bool ProxMatcher();
 };
 
-class LoopMatch : public vector<NodeMatch> {
+class LoopMatch : public UTRefCount, public vector<UTRef<NodeMatch>> {
 public:
 	int id;
 	real_t score;
 	bool reverse;
-	LoopMatch() : vector<NodeMatch>(), id(-1), score(NAN), reverse() {}
+	LoopMatch() : vector<UTRef<NodeMatch>>(), id(-1), score(NAN), reverse() {}
 	NodeMatch* FindByNodes(const Node* _nodef, const Node* _nodet);
 };
 
-class Matches : public vector<LoopMatch> {
+class Matches : public UTRefCount, public vector<UTRef<LoopMatch>> {
 public:
-	Matches() : vector<LoopMatch>() {};
+	Matches() : vector<UTRef<LoopMatch>>() {};
 	LoopMatch* FindById(const int _id);
 	NodeMatch* FindByNodes(const Node* _nodef, const Node* _nodet);
 };

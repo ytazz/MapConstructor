@@ -36,6 +36,26 @@ void Prox::xyz_to_shp() {
 	spherical[2] = sqrt(x * x + y * y + z * z);
 }
 
+
+
+// class Proxs
+Prox* Proxs::FindById(const int _id) {
+	for (Prox* prox : *this)
+		if (prox->id == _id)
+			return prox;
+	return 0;
+}
+
+Prox* Proxs::FindByIndex(const int _index) {
+	for (Prox* prox : *this)
+		if (prox->index == _index)
+			return prox;
+	return 0;
+}
+
+
+
+// class Geo
 void Geo::llh_to_ecef() {
 	const double Clat = cos(llh[0]), Slat = sin(llh[0]);
 	const double chi = sqrt(1. - e2 * Slat * Slat);
@@ -58,31 +78,6 @@ void Geo::enu_to_xyz(const real_t& AngOffset, const vec2_t& PosOffset) {
 	xyz = mat3_t::Rot(AngOffset, 'z') * enu + vec3_t(PosOffset.x, PosOffset.y, 0.);
 }
 
-
-
-// class Proxs
-Proxs::Proxs(const Proxs& proxs) : vector<Prox>(proxs), node(proxs.node) {
-	for (Prox& prox : *this)
-		prox.node = proxs.node;
-};
-Proxs::Proxs(const Proxs& proxs, Node* _node) : vector<Prox>(proxs), node(_node) {
-	for (Prox& prox : *this)
-		prox.node = _node;
-};
-
-Prox* Proxs::FindById(const int _id) {
-	for (Prox& prox : *this)
-		if (prox.id == _id)
-			return &prox;
-	return 0;
-}
-
-Prox* Proxs::FindByIndex(const int _index) {
-	for (Prox& prox : *this)
-		if (prox.index == _index)
-			return &prox;
-	return 0;
-}
 
 
 // class PointCloud
@@ -122,7 +117,7 @@ vector<Point*> PointCloud::FindNearest(const vec3_t _pos, int top) {
 
 
 // class PC_Loader
-bool PC_Loader::Load(const int& skip, const vec2_t& verticalRange) {
+bool PC_Loader::Load(const int& countSkip, const real_t& distSkip, const vec2_t& verticalRange) {
 	ifstream pcFile(fileName);
 	pcFile.seekg(row);
 	pcMemory = new PointCloud;
@@ -135,6 +130,7 @@ bool PC_Loader::Load(const int& skip, const vec2_t& verticalRange) {
 		getline(ss, str2, ',');
 	streampos g = ss.tellg();
 	int numPoint = atoi(str2.c_str());
+	vector<pair<real_t, vec3_t>> pcSort;
 	for (int i = 0;; i++) {
 		bool flag = false;
 		vector<string> pos_str(3);
@@ -145,48 +141,63 @@ bool PC_Loader::Load(const int& skip, const vec2_t& verticalRange) {
 			}
 		if (flag)
 			break;
-		Point point;
-		point.pos = vec3_t{ atof(pos_str[0].c_str()), atof(pos_str[1].c_str()), atof(pos_str[2].c_str()) } * 0.001;
-		point.id = pcMemory->size();
-		real_t verticalAngle = atan2(point.pos.Z() - 0.8, sqrt(point.pos.X() * point.pos.X() + point.pos.Y() * point.pos.Y()));
-		if(verticalRange[0] < verticalAngle && verticalAngle < verticalRange[1])
-			pcMemory->push_back(point);
-		ss.seekg(21 * (skip - 1), ios_base::cur);
+		vec3_t point = vec3_t{ atof(pos_str[0].c_str()), atof(pos_str[1].c_str()), atof(pos_str[2].c_str()) } * 0.001;
+		real_t verticalAngle = atan2(point[2] - 0.8, sqrt(point[0] * point[0] + point[1] * point[1]));
+		if (verticalRange[0] < verticalAngle && verticalAngle < verticalRange[1])
+			pcSort.push_back(pair<real_t, vec3_t>(atan2(point[1], point[0]), point));
+		ss.seekg(21 * (countSkip - 1), ios_base::cur);
 	}
+
+	std::sort(pcSort.begin(), pcSort.end());
+	
+	const real_t sqDistSkip = distSkip * distSkip;
+	for (pair<real_t, vec3_t>& _pcSort : pcSort) {
+		bool flag = false;
+		for (int i = 0; i < 10 && i < pcMemory->size(); i++) {
+			//vec2_t diff2D = vec2_t(_pcSort.second[0] - pcMemory->at(pcMemory->size() - i - 1).pos[0],
+			//	                   _pcSort.second[1] - pcMemory->at(pcMemory->size() - i - 1).pos[1]);
+			if ((_pcSort.second - pcMemory->at(pcMemory->size() - i - 1).pos).square() < sqDistSkip) {
+				flag = true;
+				break;
+			}
+		}
+		if (flag)
+			continue;
+		Point point;
+		point.pos = _pcSort.second;
+		point.id = pcMemory->size();
+		pcMemory->push_back(point);
+	}
+
 	return true;
 }
 
 
 
 // class Nodes
-Nodes::Nodes(const Nodes& nodes) : vector<Node>(nodes), map(nodes.map) {
-	for (Node& node : *this)
-		node.map = nodes.map;
-};
-
-Nodes::Nodes(const Nodes& nodes, Map* _map) : vector<Node>(nodes), map(_map) {
-	for (Node& node : *this)
-		node.map = _map;
+Nodes::Nodes(const Nodes& nodes) : vector<UTRef<Node>>(nodes), map(nodes.map) {
+	for (Node* node : *this)
+		node->map = nodes.map;
 };
 
 Node* Nodes::FindByIndex(const int _index) {
-	for (Node& node : *this)
-		if (node.index == _index)
-			return &node;
+	for (Node* node : *this)
+		if (node->index == _index)
+			return node;
 	return 0;
 }
 
 Node* Nodes::FindByCount(const int _count) {
-	for (Node& node : *this)
-		if (node.count == _count)
-			return &node;
+	for (Node* node : *this)
+		if (node->count == _count)
+			return node;
 	return 0;
 }
 
 Node* Nodes::FindByTime(const int _time) {
-	for (Node& node : *this)
-		if (node.time == _time)
-			return &node;
+	for (Node* node : *this)
+		if (node->time == _time)
+			return node;
 	return 0;
 }
 
@@ -194,9 +205,9 @@ Node* Nodes::FindByTime(const int _time) {
 
 // class Maps
 Map* Maps::FindById(const int _id) {
-	for (Map& map : *this)
-		if (map.id == _id)
-			return &map;
+	for (Map* map : *this)
+		if (map->id == _id)
+			return map;
 	return 0;
 }
 
@@ -212,75 +223,21 @@ ProxMatch::ProxMatch(const ProxMatch& pm) : f(pm.f), t(pm.t), similarity() {
 
 //class ProxMatches
 ProxMatch* ProxMatches::FindByProxs(const Prox* _proxf, const Prox* _proxt) {
-	for (ProxMatch& pm : *this)
-		if ((pm.f == _proxf && pm.t == _proxt) ||
-			(pm.f == _proxt && pm.t == _proxf))
-			return &pm;
+	for (ProxMatch* pm : *this)
+		if ((pm->f == _proxf && pm->t == _proxt) ||
+			(pm->f == _proxt && pm->t == _proxf))
+			return pm;
 	return 0;
 }
 
 
 
-//class NodeMatch
-bool NodeMatch::ProxMatcher() {
-	if (!f || !t)
-		return false;
-	proxMatches.clear();
-	vmat_t ppl;
-	ppl.resize(f->proximities.size(), t->proximities.size());
-	vector<vec3_t> absProxf, absProxt, absUnitf, absUnitt;
-	for (int i = 0; i < f->proximities.size(); i++) {
-		absProxf.push_back(f->location.pose * f->proximities[i].pos);
-		absUnitf.push_back(f->location.pose.Ori() * f->proximities[i].pos.unit());
-	}
-	for (int i = 0; i < t->proximities.size(); i++) {
-		absProxt.push_back(t->location.pose * t->proximities[i].pos);
-		absUnitt.push_back(t->location.pose.Ori() * t->proximities[i].pos.unit());
-	}
-	for(int i = 0; i < f->proximities.size(); i++)
-		for (int j = 0; j < t->proximities.size(); j++) {
-			real_t lf = absUnitf[i].dot(absProxt[j] - absProxf[i]);
-			real_t lt = absUnitt[j].dot(absProxf[i] - absProxt[j]);
-			ppl[i][j] = max(lf * lf, lt * lt);
-		}
-	for (int i = 0; i < f->proximities.size(); i++) {
-		int minj = -1;
-		real_t minl = DBL_MAX;
-		for (int j = 0; j < t->proximities.size(); j++) {
-			if (ppl[i][j] < minl) {
-				minl = ppl[i][j];
-				minj = j;
-			}
-		}
-		if (minj == -1)
-			continue;
-
-		int mini = -1;
-		minl = DBL_MAX;
-		for (int k = 0; k < f->proximities.size(); k++) {
-			if (ppl[k][minj] < minl) {
-				minl = ppl[k][minj];
-				mini = k;
-			}
-		}
-		if (mini == i) {
-			ProxMatch pm(&(f->proximities[mini]), &(t->proximities[minj]));
-			pm.similarity[0] = 1.;
-			pm.similarity[1] = 1.;
-			proxMatches.push_back(pm);
-		}
-	}
-}
-
-
-
-
 //class LoopMatch
 NodeMatch* LoopMatch::FindByNodes(const Node* _nodef, const Node* _nodet) {
-	for (NodeMatch& nm : *this)
-		if ((nm.f == _nodef && nm.t == _nodet) ||
-			(nm.f == _nodet && nm.t == _nodef))
-			return &nm;
+	for (NodeMatch* nm : *this)
+		if ((nm->f == _nodef && nm->t == _nodet) ||
+			(nm->f == _nodet && nm->t == _nodef))
+			return nm;
 	return 0;
 }
 
@@ -288,18 +245,18 @@ NodeMatch* LoopMatch::FindByNodes(const Node* _nodef, const Node* _nodet) {
 
 //class Matches
 LoopMatch* Matches::FindById(const int _id) {
-	for (LoopMatch& lm : *this)
-		if (lm.id == _id)
-			return &lm;
+	for (LoopMatch* lm : *this)
+		if (lm->id == _id)
+			return lm;
 	return 0;
 }
 
 NodeMatch* Matches::FindByNodes(const Node* _nodef, const Node* _nodet) {
-	for (LoopMatch& lm : *this)
-		for (NodeMatch& nm : lm)
-			if ((nm.f == _nodef && nm.t == _nodet) ||
-				(nm.f == _nodet && nm.t == _nodef))
-				return &nm;
+	for (LoopMatch* lm : *this)
+		for (NodeMatch* nm : *lm)
+			if ((nm->f == _nodef && nm->t == _nodet) ||
+				(nm->f == _nodet && nm->t == _nodef))
+				return nm;
 	return 0;
 }
 

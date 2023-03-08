@@ -30,18 +30,6 @@ static void _swap(T& A, T& B) {
 	return;
 }
 
-template<class T>
-static void push_back(vector<T>& vec, const T& a) {
-	vec.resize(vec.size() + 1, a);
-	return;
-}
-
-template<class T>
-static void push_back(vector<T>* vec, const T& a) {
-	vec->resize(vec->size() + 1, a);
-	return;
-}
-
 static inline real_t WrapPi(const real_t _angle) {
 	real_t angle = _angle;
 	while (angle > M_PI)

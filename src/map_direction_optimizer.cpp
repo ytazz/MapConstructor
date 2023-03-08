@@ -118,12 +118,12 @@ int MapDirectionPreprocess::Task(int argc, const char* argv[]) {
 	setting->Get<string>(clacSimEqMethodStr, ".clacSimEqMethod");
 	int clacSimEqMethod = ClacSimEqMethod::FindMethod(clacSimEqMethodStr);
 	MapDirectionOptimizer mdo(maps->size(), 1, clacSimEqMethod);
-	for(LoopMatch& lm : *matches)
-		for (NodeMatch& nm : lm) {
+	for(LoopMatch* lm : *matches)
+		for (NodeMatch* nm : *lm) {
 			mapPairRef mp;
-			mp.mapFrom = nm.f->map->id - 1;
-			mp.mapTo = nm.t->map->id - 1;
-			mp.angleRef = WrapPi(nm.t->location.pose.Ori().Rotation().Z() - nm.f->location.pose.Ori().Rotation().Z() - (lm.reverse ? M_PI : 0.));
+			mp.mapFrom = nm->f->map->id - 1;
+			mp.mapTo = nm->t->map->id - 1;
+			mp.angleRef = WrapPi(nm->t->location.pose.Ori().Rotation().Z() - nm->f->location.pose.Ori().Rotation().Z() - (lm->reverse ? M_PI : 0.));
 			mdo.mprs.push_back(mp);
 		}
 	mdo.Init();
@@ -133,8 +133,8 @@ int MapDirectionPreprocess::Task(int argc, const char* argv[]) {
 	clock_t end_t = clock();
 
 	for (int id = 0; id < maps->size(); id++)
-		for (Node& node : (*maps)[id].nodes)
-			node.location.pose = pose_t::Rot(mdo.getParam()(id), 'z') * node.location.pose;
+		for (Node* node : maps->at(id)->nodes)
+			node->location.pose = pose_t::Rot(mdo.getParam()(id), 'z') * node->location.pose;
 
 	return 0;
 }

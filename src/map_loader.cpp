@@ -21,8 +21,8 @@ namespace MapConstructor {
 bool MapLoader::LocLoader(const int mapID) {
 	Map* map(maps->FindById(mapID));
 	if (!map) {
-		push_back(maps, Map());
-		map = &(maps->back());
+		map = new Map();
+		maps->push_back(map);
 		map->id = mapID;
 	}
 
@@ -33,8 +33,10 @@ bool MapLoader::LocLoader(const int mapID) {
 
 		Node* node(map->nodes.FindByCount(count));
 		if (!node) {
-			push_back(map->nodes, Node(map));
-			node = &(map->nodes.back());
+			node = new Node();
+			map->nodes.push_back(node);
+			node->map = map;
+			//node = map->nodes.back();
 			node->count = loadFile.Get<int>(r, 0);
 			node->time = loadFile.Get<int>(r, 1);
 			node->index = NodeId++;
@@ -49,8 +51,8 @@ bool MapLoader::LocLoader(const int mapID) {
 bool MapLoader::MovementLoader(const int mapID) {
 	Map* map(maps->FindById(mapID));
 	if (!map) {
-		push_back(maps, Map());
-		map = &(maps->back());
+		map = new Map();
+		maps->push_back(map);
 		map->id = mapID;
 	}
 
@@ -61,16 +63,20 @@ bool MapLoader::MovementLoader(const int mapID) {
 
 		Node* node(map->nodes.FindByCount(count));
 		if (!node) {
-			push_back(map->nodes, Node(map));
-			node = &(map->nodes.back());
+			node = new Node();
+			map->nodes.push_back(node);
+			node->map = map;
+			//node = &(map->nodes.back());
 			node->count = loadFile.Get<int>(r, 0);
 			node->time = loadFile.Get<int>(r, 1);
 			node->index = NodeId++;
 		}
-		Node* prevNode(map->nodes.FindByCount(count) - 1);
+		Node* prevNode(map->nodes.FindByCount(count - 1));
 		if (!prevNode) {
-			push_back(map->nodes, Node(map));
-			prevNode = &(map->nodes.back());
+			prevNode = new Node();
+			map->nodes.push_back(prevNode);
+			prevNode->map = map;
+			//prevNode = &(map->nodes.back());
 			prevNode->count = loadFile.Get<int>(r, 0);
 			prevNode->time = loadFile.Get<int>(r, 1);
 			prevNode->index = NodeId++;
@@ -89,8 +95,8 @@ bool MapLoader::MovementLoader(const int mapID) {
 bool MapLoader::ProxLoader(const int mapID) {
 	Map* map(maps->FindById(mapID));
 	if (!map) {
-		push_back(maps, Map());
-		map = &(maps->back());
+		map = new Map();
+		maps->push_back(map);
 		map->id = mapID;
 	}
 
@@ -101,8 +107,10 @@ bool MapLoader::ProxLoader(const int mapID) {
 
 		Node* node(map->nodes.FindByCount(count));
 		if (!node) {
-			push_back(map->nodes, Node(map));
-			node = &(map->nodes.back());
+			node = new Node();
+			map->nodes.push_back(node);
+			node->map = map;
+			//node = &(map->nodes.back());
 			node->count = loadFile.Get<int>(r, 0);
 			node->time = loadFile.Get<int>(r, 1);
 			node->index = NodeId++;
@@ -112,8 +120,10 @@ bool MapLoader::ProxLoader(const int mapID) {
 		for (int k = 0; k < n; k++) {
 			Prox* prox(node->proximities.FindById(loadFile.Get<int>(r, 3 + 6 * k)));
 			if (!prox) {
-				push_back(node->proximities, Prox(node));
-				prox = &(node->proximities.back());
+				prox = new Prox();
+				node->proximities.push_back(prox);
+				prox->node = node;
+				//prox = &(node->proximities.back());
 				prox->index = node->proximities.size() - 1;
 				prox->id = loadFile.Get<int>(r, 3 + 6 * k);
 			}
@@ -129,13 +139,13 @@ bool MapLoader::ProxLoader(const int mapID) {
 bool MapLoader::GeoLoader(const int mapID) {
 	Map* map(maps->FindById(mapID));
 	if (!map) {
-		push_back(maps, Map());
-		map = &(maps->back());
+		map = new Map();
+		maps->push_back(map);
 		map->id = mapID;
 	}
 
-	int timeScale = 500;
-	setting->Get<int>(timeScale, ".timeScale");
+	int timeStep = 500;
+	setting->Get<int>(timeStep, ".timeStep");
 
 	for (int r = 0; r < loadFile.NumRow(); r++) {
 		const int count = loadFile.Get<int>(r, 0);
@@ -144,10 +154,12 @@ bool MapLoader::GeoLoader(const int mapID) {
 			continue;
 
 		Node* node(map->nodes.FindByCount(count));
-		if (time == count * timeScale) {
+		if (time == count * timeStep) {
 			if (!node) {
-				push_back(map->nodes, Node(map));
-				node = &(map->nodes.back());
+				node = new Node();
+				map->nodes.push_back(node);
+				node->map = map;
+				//node = &(map->nodes.back());
 				node->count = -1;
 				node->time = time;
 				node->index = NodeId++;
@@ -156,9 +168,11 @@ bool MapLoader::GeoLoader(const int mapID) {
 		else {
 			node = map->nodes.FindByTime(time);
 			if (!node) {
-				if (time % timeScale == 0) {
-					push_back(map->nodes, Node(map));
-					node = &(map->nodes.back());
+				if (time % timeStep == 0) {
+					node = new Node();
+					map->nodes.push_back(node);
+					node->map = map;
+					//node = &(map->nodes.back());
 					node->count = -1;
 					node->time = time;
 					node->index = NodeId++;
@@ -179,8 +193,8 @@ bool MapLoader::GeoLoader(const int mapID) {
 bool MapLoader::PointCloudLoader(const string filename, const int mapID) {
 	Map* map(maps->FindById(mapID));
 	if (!map) {
-		push_back(maps, Map());
-		map = &(maps->back());
+		map = new Map();
+		maps->push_back(map);
 		map->id = mapID;
 	}
 
@@ -231,8 +245,8 @@ bool MapLoader::MatchLoader() {
 
 		LoopMatch* lm = matches->FindById(index);
 		if (!lm) {
-			push_back(matches, LoopMatch());
-			lm = &(matches->back());
+			lm = new LoopMatch();
+			matches->push_back(lm);
 			lm->id = index;
 			lm->score = score;
 			lm->reverse = reverse;
@@ -240,8 +254,8 @@ bool MapLoader::MatchLoader() {
 
 		NodeMatch* nm = lm->FindByNodes(fnode, tnode);
 		if (!nm) {
-			push_back(lm, NodeMatch(fnode, tnode));
-			nm = &(lm->back());
+			nm = new NodeMatch(fnode, tnode);
+			lm->push_back(nm);
 		}
 
 		for (int k = 0; k < num_pm; k++) {
@@ -271,8 +285,8 @@ bool MapLoader::MatchLoader() {
 
 			ProxMatch* pm = nm->proxMatches.FindByProxs(fprox, tprox);
 			if (!pm) {
-				push_back(nm->proxMatches, ProxMatch(fprox, tprox));
-				pm = &(nm->proxMatches.back());
+				pm = new ProxMatch(fprox, tprox);
+				nm->proxMatches.push_back(pm);
 				pm->similarity[0] = sim[0];
 				pm->similarity[1] = sim[1];
 			}
@@ -303,8 +317,8 @@ bool MapLoader::PoseRefLoader() {
 
 		LoopMatch* lm = matches->FindById(index);
 		if (!lm) {
-			push_back(matches, LoopMatch());
-			lm = &(matches->back());
+			lm = new LoopMatch();
+			matches->push_back(lm);
 			lm->id = index;
 			lm->score = 0.;
 			lm->reverse = reverse;
@@ -312,8 +326,8 @@ bool MapLoader::PoseRefLoader() {
 
 		NodeMatch* nm = lm->FindByNodes(fnode, tnode);
 		if (!nm) {
-			push_back(lm, NodeMatch(fnode, tnode));
-			nm = &(lm->back());
+			nm = new NodeMatch(fnode, tnode);
+			lm->push_back(nm);
 		}
 
 		nm->locMatch;
@@ -351,6 +365,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 		catch (...) { continue; };
 		cout << "mapID : " << i + 1 << " - Load : ";
 
+		filename = "";
 		for(string form : format)
 			if (form == "Loc") {
 				MapSetting->Get<string>(filename, ".LocFile");
@@ -362,6 +377,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 				break;
 			}
 
+		filename = "";
 		for (string form : format)
 			if (form == "Movement") {
 				MapSetting->Get<string>(filename, ".MovementFile");
@@ -373,6 +389,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 				break;
 			}
 
+		filename = "";
 		for (string form : format)
 			if (form == "Prox") {
 				MapSetting->Get<string>(filename, ".ProxFile");
@@ -384,6 +401,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 				break;
 			}
 
+		filename = "";
 		for (string form : format)
 			if (form == "Geo") {
 				MapSetting->Get<string>(filename, ".GeoFile");
@@ -395,6 +413,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 				break;
 			}
 
+		filename = "";
 		for (string form : format)
 			if (form == "PC") {
 				MapSetting->Get<string>(filename, ".PCFile");
@@ -410,6 +429,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 
 	cout << "Loop - Load : ";
 
+	filename = "";
 	for (string form : format)
 		if (form == "Match") {
 			setting->Get<string>(filename, ".MatchFile");
@@ -421,6 +441,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 			break;
 		}
 
+	filename = "";
 	for (string form : format)
 		if (form == "PoseRef") {
 			setting->Get<string>(filename, ".PoseRefFile");

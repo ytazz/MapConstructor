@@ -187,40 +187,40 @@ int ProxOptimizer::Task(int argc, const char* argv[]) {
 	int maxItr = 20;
 	setting->Get<int>(maxItr, ".maxItr");
 
-	for (LoopMatch& lm : *matches) {
-		cout << "matchID : " << lm.id << endl;
+	for (LoopMatch* lm : *matches) {
+		cout << "matchID : " << lm->id << endl;
 		XMLNode* MatchSetting;
 		try {
 			for (int i = 0;; i++) {
 				MatchSetting = setting->GetNode("Match", i);
 				int ID = -1;
 				MatchSetting->Get<int>(ID, ".ID");
-				if (ID == -1 || ID == lm.id) 
+				if (ID == -1 || ID == lm->id)
 					break;
 			}
 		}
 		catch (...) { continue; }
-		for (NodeMatch& nm : lm) {
-			ProxDirMatcher pdm(nm.proxMatches.size(), clacSimEqMethod);
-			ProximityMatcher pm(nm.proxMatches.size(), clacSimEqMethod);
-			for (int i = 0; i < nm.proxMatches.size(); i++) {
-				pm.pp[0][i] = pdm.pp[0][i] = nm.proxMatches[i].f->index;
-				pm.pp[1][i] = pdm.pp[1][i] = nm.proxMatches[i].t->index;
-				pm.omega[i] = pdm.omega[i] = 0.5 * (nm.proxMatches[i].similarity[0] + nm.proxMatches[i].similarity[1]);
+		for (NodeMatch* nm : *lm) {
+			ProxDirMatcher pdm(nm->proxMatches.size(), clacSimEqMethod);
+			ProximityMatcher pm(nm->proxMatches.size(), clacSimEqMethod);
+			for (int i = 0; i < nm->proxMatches.size(); i++) {
+				pm.pp[0][i] = pdm.pp[0][i] = nm->proxMatches[i]->f->index;
+				pm.pp[1][i] = pdm.pp[1][i] = nm->proxMatches[i]->t->index;
+				pm.omega[i] = pdm.omega[i] = 0.5 * (nm->proxMatches[i]->similarity[0] + nm->proxMatches[i]->similarity[1]);
 			}
 
-			nm.locMatch.poseRef.clear();
-			nm.locMatch.info.clear();
+			nm->locMatch.poseRef.clear();
+			nm->locMatch.info.clear();
 			if (pm.getError().size() > 3) {
 				pm.pos_reff = Vector2d::Zero();
 				pm.ang_reff = 0;
-				for (Prox& prox : nm.f->proximities) {
-					pm.prox[0].push_back(Vector2d(prox.pos.X(), prox.pos.Y()));
-					pdm.prox[0].push_back(atan2(prox.pos.Y(), prox.pos.X()));
+				for (Prox* prox : nm->f->proximities) {
+					pm.prox[0].push_back(Vector2d(prox->pos.X(), prox->pos.Y()));
+					pdm.prox[0].push_back(atan2(prox->pos.Y(), prox->pos.X()));
 				}
-				for (Prox& prox : nm.t->proximities) {
-					pm.prox[1].push_back(Vector2d(prox.pos.X(), prox.pos.Y()));
-					pdm.prox[1].push_back(atan2(prox.pos.Y(), prox.pos.X()));
+				for (Prox* prox : nm->t->proximities) {
+					pm.prox[1].push_back(Vector2d(prox->pos.X(), prox->pos.Y()));
+					pdm.prox[1].push_back(atan2(prox->pos.Y(), prox->pos.X()));
 				}
 				pdm.maxItr = maxItr;
 				pdm.Init();
@@ -232,12 +232,12 @@ int ProxOptimizer::Task(int argc, const char* argv[]) {
 					pm.pos_reff = pm.getParam().block<2, 1>(0, 0);
 					pm.ang_reff = pm.getParam()(2);
 					Eigen::Matrix3d hessi = pm.getH();
-					nm.locMatch.poseRef.Pos() = vec3_t(pm.pos_reff.x(), pm.pos_reff.y(), 0.);
-					nm.locMatch.poseRef.Ori() = FromRollPitchYaw(vec3_t(0., 0., pm.ang_reff));
+					nm->locMatch.poseRef.Pos() = vec3_t(pm.pos_reff.x(), pm.pos_reff.y(), 0.);
+					nm->locMatch.poseRef.Ori() = FromRollPitchYaw(vec3_t(0., 0., pm.ang_reff));
 					const int index[3] = { 0, 1, 5 };
 					for (int i = 0; i < 3; i++)
 						for (int j = 0; j < 3; j++)
-							nm.locMatch.info[index[i]][index[j]] = hessi(i, j);
+							nm->locMatch.info[index[i]][index[j]] = hessi(i, j);
 				}
 			}
 		}
