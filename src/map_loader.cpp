@@ -19,6 +19,7 @@ using namespace Scenebuilder;
 namespace MapConstructor {
 
 bool MapLoader::LocLoader(const int mapID) {
+	// Find a map with mapID registered (if not, build a new one)
 	Map* map(maps->FindById(mapID));
 	if (!map) {
 		map = new Map();
@@ -31,17 +32,18 @@ bool MapLoader::LocLoader(const int mapID) {
 		if (count <= 0)
 			continue;
 
+		// Find a node with count registered (if not, build a new one)
 		Node* node(map->nodes.FindByCount(count));
 		if (!node) {
 			node = new Node();
 			map->nodes.push_back(node);
 			node->map = map;
-			//node = map->nodes.back();
 			node->count = loadFile.Get<int>(r, 0);
 			node->time = loadFile.Get<int>(r, 1);
 			node->index = NodeId++;
 		}
 
+		// Register robot pose
 		node->location.pose.Pos() = vec3_t{ loadFile.Get<real_t>(r, 2), loadFile.Get<real_t>(r, 3), loadFile.Get<real_t>(r, 4) };
 		node->location.pose.Ori() = FromRollPitchYaw(vec3_t{ loadFile.Get<real_t>(r, 5), loadFile.Get<real_t>(r, 6), loadFile.Get<real_t>(r, 7) });
 	}
@@ -49,6 +51,7 @@ bool MapLoader::LocLoader(const int mapID) {
 }
 
 bool MapLoader::MovementLoader(const int mapID) {
+	// Find a map with mapID registered (if not, build a new one)
 	Map* map(maps->FindById(mapID));
 	if (!map) {
 		map = new Map();
@@ -61,27 +64,29 @@ bool MapLoader::MovementLoader(const int mapID) {
 		if (count <= 0)
 			continue;
 
+		// Find a node with count registered (if not, build a new one)
 		Node* node(map->nodes.FindByCount(count));
 		if (!node) {
 			node = new Node();
 			map->nodes.push_back(node);
 			node->map = map;
-			//node = &(map->nodes.back());
 			node->count = loadFile.Get<int>(r, 0);
 			node->time = loadFile.Get<int>(r, 1);
 			node->index = NodeId++;
 		}
+
+		// Find a prevNode with count registered (if not, build a new one)
 		Node* prevNode(map->nodes.FindByCount(count - 1));
 		if (!prevNode) {
 			prevNode = new Node();
 			map->nodes.push_back(prevNode);
 			prevNode->map = map;
-			//prevNode = &(map->nodes.back());
 			prevNode->count = loadFile.Get<int>(r, 0);
 			prevNode->time = loadFile.Get<int>(r, 1);
 			prevNode->index = NodeId++;
 		}
 
+		// Register odometry
 		node->movement.prevNode = prevNode;
 		node->movement.poseRef.Pos() = vec3_t{ loadFile.Get<real_t>(r, 2), loadFile.Get<real_t>(r, 3), loadFile.Get<real_t>(r, 4) };
 		node->movement.poseRef.Ori() = FromRollPitchYaw(vec3_t{ loadFile.Get<real_t>(r, 5), loadFile.Get<real_t>(r, 6), loadFile.Get<real_t>(r, 7) });
@@ -93,6 +98,7 @@ bool MapLoader::MovementLoader(const int mapID) {
 }
 
 bool MapLoader::ProxLoader(const int mapID) {
+	// Find a map with mapID registered (if not, build a new one)
 	Map* map(maps->FindById(mapID));
 	if (!map) {
 		map = new Map();
@@ -106,11 +112,11 @@ bool MapLoader::ProxLoader(const int mapID) {
 			continue;
 
 		Node* node(map->nodes.FindByCount(count));
+		// Find a node with count registered (if not, build a new one)
 		if (!node) {
 			node = new Node();
 			map->nodes.push_back(node);
 			node->map = map;
-			//node = &(map->nodes.back());
 			node->count = loadFile.Get<int>(r, 0);
 			node->time = loadFile.Get<int>(r, 1);
 			node->index = NodeId++;
@@ -118,15 +124,17 @@ bool MapLoader::ProxLoader(const int mapID) {
 
 		int n = loadFile.Get<int>(r, 2);
 		for (int k = 0; k < n; k++) {
+			// Find a proximity-point with Id registered (if not, build a new one)
 			Prox* prox(node->proximities.FindById(loadFile.Get<int>(r, 3 + 6 * k)));
 			if (!prox) {
 				prox = new Prox();
 				node->proximities.push_back(prox);
 				prox->node = node;
-				//prox = &(node->proximities.back());
 				prox->index = node->proximities.size() - 1;
 				prox->id = loadFile.Get<int>(r, 3 + 6 * k);
 			}
+
+			// Register proximity-point data
 			prox->duration = loadFile.Get<int>(r, 4 + 6 * k);
 			prox->velocity = loadFile.Get<real_t>(r, 5 + 6 * k);
 			prox->spherical = vec3_t{ loadFile.Get<real_t>(r, 6 + 6 * k), loadFile.Get<real_t>(r, 7 + 6 * k), loadFile.Get<real_t>(r, 8 + 6 * k) };
@@ -137,6 +145,7 @@ bool MapLoader::ProxLoader(const int mapID) {
 }
 
 bool MapLoader::GeoLoader(const int mapID) {
+	// Find a map with mapID registered (if not, build a new one)
 	Map* map(maps->FindById(mapID));
 	if (!map) {
 		map = new Map();
@@ -155,24 +164,24 @@ bool MapLoader::GeoLoader(const int mapID) {
 
 		Node* node(map->nodes.FindByCount(count));
 		if (time == count * timeStep) {
+			// Find a node with count registered (if not, build a new one)
 			if (!node) {
 				node = new Node();
 				map->nodes.push_back(node);
 				node->map = map;
-				//node = &(map->nodes.back());
 				node->count = -1;
 				node->time = time;
 				node->index = NodeId++;
 			}
 		}
 		else {
+			// Find a node with time registered (if not, don't register Geo data)
 			node = map->nodes.FindByTime(time);
 			if (!node) {
 				if (time % timeStep == 0) {
 					node = new Node();
 					map->nodes.push_back(node);
 					node->map = map;
-					//node = &(map->nodes.back());
 					node->count = -1;
 					node->time = time;
 					node->index = NodeId++;
@@ -181,6 +190,8 @@ bool MapLoader::GeoLoader(const int mapID) {
 					continue;
 			}
 		}
+
+		// Register Geo data
 		node->geography.geoCount = count;
 		node->geography.llh = vec3_t{ D2R * loadFile.Get<real_t>(r, 2), D2R * loadFile.Get<real_t>(r, 3), loadFile.Get<real_t>(r, 4) };
 		node->geography.utcTime = loadFile.Get<int>(r, 5);
@@ -191,6 +202,7 @@ bool MapLoader::GeoLoader(const int mapID) {
 }
 
 bool MapLoader::PointCloudLoader(const string filename, const int mapID) {
+	// Find a map with mapID registered (if not, build a new one)
 	Map* map(maps->FindById(mapID));
 	if (!map) {
 		map = new Map();
@@ -199,7 +211,6 @@ bool MapLoader::PointCloudLoader(const string filename, const int mapID) {
 	}
 
 	ifstream PCFile(filename);
-
 	for (int r = 0;; r++) {
 		string str;
 		streampos g = PCFile.tellg();
@@ -211,10 +222,12 @@ bool MapLoader::PointCloudLoader(const string filename, const int mapID) {
 		if (count <= 0)
 			continue;
 
+		// Find a node with count registered (if not, don't register pointcloud data)
 		Node* node(map->nodes.FindByCount(count));
 		if (!node)
 			continue;
 
+		// Register the file name and first character position where the pointcloud data is located
 		node->pc.fileName = filename;
 		node->pc.row = g;
 	}
@@ -233,16 +246,19 @@ bool MapLoader::MatchLoader() {
 		const bool reverse = loadFile.Get<bool>(r, 9);
 		const int num_pm = loadFile.Get<int>(r, 10);
 
+		// Find 2 maps with 2 mapIDs registered (if not, don't register match data)
 		Map* fmap = maps->FindById(mapID[0]);
 		Map* tmap = maps->FindById(mapID[1]);
 		if (!fmap || !tmap)
 			continue;
 
+		// Find 2 nodes with 2 counts registered (if not, don't register match data)
 		Node* fnode = fmap->nodes.FindByCount(count[0]);
 		Node* tnode = tmap->nodes.FindByCount(count[1]);
 		if (!fnode || !tnode)
 			continue;
 
+		// Find a loop section with matchID registered (if not, build a new one)
 		LoopMatch* lm = matches->FindById(index);
 		if (!lm) {
 			lm = new LoopMatch();
@@ -252,6 +268,7 @@ bool MapLoader::MatchLoader() {
 			lm->reverse = reverse;
 		}
 
+		// Find a node pair with 2 nodes registered (if not, build a new one)
 		NodeMatch* nm = lm->FindByNodes(fnode, tnode);
 		if (!nm) {
 			nm = new NodeMatch(fnode, tnode);
@@ -261,6 +278,8 @@ bool MapLoader::MatchLoader() {
 		for (int k = 0; k < num_pm; k++) {
 			const int proxId[2] = { loadFile.Get<int>(r, 11 + 4 * k), loadFile.Get<int>(r, 12 + 4 * k) };
 			const real_t sim[2] = { loadFile.Get<real_t>(r, 13 + 4 * k), loadFile.Get<real_t>(r, 14 + 4 * k) };
+
+			// Find 2 proxs with 2 Ids registered (if not, don't register prox pair)
 			Prox* fprox = fnode->proximities.FindById(proxId[0]);
 			Prox* tprox = tnode->proximities.FindById(proxId[1]);
 			if (!fprox || !tprox)
@@ -283,6 +302,7 @@ bool MapLoader::MatchLoader() {
 			//if (std::abs(yawDiff) > maxYawMatchError)
 			//	continue;
 
+			// Find a prox pair with 2 proxs registered (if not, build a new one)
 			ProxMatch* pm = nm->proxMatches.FindByProxs(fprox, tprox);
 			if (!pm) {
 				pm = new ProxMatch(fprox, tprox);
@@ -305,16 +325,19 @@ bool MapLoader::PoseRefLoader() {
 		const int size = loadFile.Get<int>(r, 7);
 		const bool reverse = loadFile.Get<bool>(r, 8);
 
+		// Find 2 maps with 2 mapIDs registered (if not, don't register match data)
 		Map* fmap = maps->FindById(mapID[0]);
 		Map* tmap = maps->FindById(mapID[1]);
 		if (!fmap || !tmap)
 			continue;
 
+		// Find 2 nodes with 2 counts registered (if not, don't register match data)
 		Node* fnode = fmap->nodes.FindByCount(count[0]);
 		Node* tnode = tmap->nodes.FindByCount(count[1]);
 		if (!fnode || !tnode)
 			continue;
 
+		// Find a loop section with matchID registered (if not, build a new one)
 		LoopMatch* lm = matches->FindById(index);
 		if (!lm) {
 			lm = new LoopMatch();
@@ -324,12 +347,14 @@ bool MapLoader::PoseRefLoader() {
 			lm->reverse = reverse;
 		}
 
+		// Find a node pair with 2 nodes registered (if not, build a new one)
 		NodeMatch* nm = lm->FindByNodes(fnode, tnode);
 		if (!nm) {
 			nm = new NodeMatch(fnode, tnode);
 			lm->push_back(nm);
 		}
 
+		// Register relative pose and information matrix
 		nm->locMatch;
 		nm->locMatch.poseRef.Pos() = vec3_t{ loadFile.Get<real_t>(r, 9), loadFile.Get<real_t>(r, 10), loadFile.Get<real_t>(r, 11) };
 		nm->locMatch.poseRef.Ori() = FromRollPitchYaw(vec3_t{ loadFile.Get<real_t>(r, 12), loadFile.Get<real_t>(r, 13), loadFile.Get<real_t>(r, 14) });
@@ -348,10 +373,11 @@ int MapLoader::Task(int argc, const char* argv[]) {
 	setting->Get<int>(mapNum, ".mapNum");
 	string formatLine;
 	setting->Get<string>(formatLine, ".loadFormat");
-	vector<string> format = split(formatLine, ' ');
+	vector<string> format = split(formatLine, ' '); // Set the format to load
 
 	string filename;
 	for (int i = 0; i < mapNum; i++) {
+		// Load settings for each map data
 		XMLNode* MapSetting;
 		try {
 			for (int j = 0;; j++) {
@@ -367,7 +393,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 
 		filename = "";
 		for(string form : format)
-			if (form == "Loc") {
+			if (form == "Loc") { // Register robot pose
 				MapSetting->Get<string>(filename, ".LocFile");
 				if (filename != "") {
 					cout << form << " ";
@@ -379,7 +405,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 
 		filename = "";
 		for (string form : format)
-			if (form == "Movement") {
+			if (form == "Movement") { // Register odometry
 				MapSetting->Get<string>(filename, ".MovementFile");
 				if (filename != "") {
 					cout << form << " ";
@@ -391,7 +417,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 
 		filename = "";
 		for (string form : format)
-			if (form == "Prox") {
+			if (form == "Prox") { // Register proximity-point position
 				MapSetting->Get<string>(filename, ".ProxFile");
 				if (filename != "") {
 					cout << form << " ";
@@ -403,7 +429,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 
 		filename = "";
 		for (string form : format)
-			if (form == "Geo") {
+			if (form == "Geo") { // Register RTK positioning data
 				MapSetting->Get<string>(filename, ".GeoFile");
 				if (filename != "") {
 					cout << form << " ";
@@ -415,7 +441,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 
 		filename = "";
 		for (string form : format)
-			if (form == "PC") {
+			if (form == "PC") { // Register where point cloud data is located
 				MapSetting->Get<string>(filename, ".PCFile");
 				if (filename != "") {
 					cout << form << " ";
@@ -431,7 +457,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 
 	filename = "";
 	for (string form : format)
-		if (form == "Match") {
+		if (form == "Match") { // Register loop constraint by proximity-point pair
 			setting->Get<string>(filename, ".MatchFile");
 			if (filename != "") {
 				cout << form << " ";
@@ -443,7 +469,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 
 	filename = "";
 	for (string form : format)
-		if (form == "PoseRef") {
+		if (form == "PoseRef") { // Register loop constraint relative pose
 			setting->Get<string>(filename, ".PoseRefFile");
 			if (filename != "") {
 				cout << form << " ";

@@ -1,9 +1,10 @@
 <nc2021>
+  <!-- Load file settings -->
   <MapLoader
     name = "MapLoad"
     mapNum = "3"
     delim = ","
-    loadFormat = "Loc Prox PC Match"
+    loadFormat = "Loc Prox Match"
     MatchFile   = "../data/nc2021_match.csv"
     PoseRefFile = "../data/nc2021_SM_poseref.csv"
     >
@@ -27,6 +28,7 @@
       />
   </MapLoader>
 
+  <!-- Save file settings -->
   <MapSaver
     name = "MapSave"
     mapNum = "3"
@@ -56,38 +58,44 @@
       />
   </MapSaver>
 
+  <!-- Save relative poses obtained by scan matching -->
   <MapSaver
     name = "PoseRefSave"
     mapNum = "3"
     saveFormat = "PoseRef"
-    PoseRefFile      = "../data/nc2021_SM_poseref.csv"
+    PoseRefFile = "../data/nc2021_SM_poseref.csv"
     >
     <Map ID = "1" />
     <Map ID = "2" />
     <Map ID = "3" />
   </MapSaver>
 
+  <!-- G2O file Load & Save file name -->
   <G2OFileIO
     name = "PoseGraph"
     LoadFileName = "../data/before_nc2021.g2o"
     SaveFileName = "../data/after_nc2021_SPROX.g2o"
     />
 
+  <!-- G2O file Save file name  Before optimization -->
   <G2OFileIO
     name = "BeforePGO"
     SaveFileName = "../data/before_nc2021.g2o"
     />
 
+  <!-- G2O file Save file name  After optimization -->
   <G2OFileIO
     name = "AfterPGO"
     SaveFileName = "../data/afte_nc2021_SPROX.g2o"
     />
 
+  <!-- Pose-Graph Optimization by G2O -->
   <MapOptimizer
     name     = "PoseGraphOptimization"
     ItrNum  = "0"
     />
 
+  <!-- Convert map data to G2O data -->
   <ToG2OConverter
     name = "ToG2O"
     >
@@ -103,6 +111,7 @@
       />
   </ToG2OConverter>
 
+  <!-- Convert map data to G2O data -->
   <ToG2OConverter
     name = "_ToG2O"
     >
@@ -116,35 +125,6 @@
       switchInfo       = "0.2"
       />
   </ToG2OConverter>
-  <!--
-    <Loop Tag = "EDGE_M_Est_PROX"
-      proxSimGain = "-1"
-      robustKernel = "Huber"
-      robustKernelDelta = "1"
-      />
-      
-      
-    <Loop Tag = "EDGE_SWITCH_PROX"
-      proxSimGain = "-1"
-      switchInfo  = "0.1"
-      />
-    
-    Node
-      Tag = "VERTEX_PROX"
-            "VERTEX_SE2"
-    Odom
-      Tag = "EDGE_SE2"
-    Loop
-      Tag = "EDGE_SE2"
-            "EDGE_SWITCH_SE2"
-            "EDGE_PROX"
-            "EDGE_SWITCH_PROX"
-            "EDGE_M_Est_PROX"
-    M_Est
-      robustKernel = "Huber"
-                     "Cauchy"
-                     "GemanMcClure"
-  -->
 
   <ProxMatcher
     name     = "ProxMatcher"
@@ -172,30 +152,18 @@
     <Match/>
   </ScanMatcher>
 
-  <!--
-  <ScanMatcher
-    name     = "ScanMatcher"
-    clacSimEqMethod = "LDLT"
-    verticalRange = "-3deg +3deg"
-    countSkip = "1"
-    distSkip = "1"
-    ignoreRatio = "0.1 0.6"
-    ICPItr = "5"
-    maxItr = "5"
-    >
-    <Match/>
-  </ScanMatcher>
-  -->
-
-  <MapDirPrepro
-    name     = "MapDirPrepro"
-    clacSimEqMethod = "LDLT"
-    />
-
   <Provisional name = "Provisional"/>
   
   
   <SEQUENCE>
+    <task name="MapLoad"/>
+    <task name="ToG2O Forward"/>
+    <task name="BeforePGO Save"/>
+    <task name="PoseGraphOptimization"/>
+    <task name="AfterPGO Save"/>
+    <task name="ToG2O Reverse"/>
+    <task name="MapSave"/>
+    <!--
     <task name="MapLoad"/>
     <task name="ScanMatcher"/>
     <task name="PoseRefSave"/>
@@ -204,14 +172,6 @@
     <task name="PoseGraphOptimization"/>
     <task name="AfterPGO Save"/>
     <task name="_ToG2O Reverse"/>
-    <task name="MapSave"/>
-    <!--
-    <task name="MapLoad"/>
-    <task name="ToG2O Forward"/>
-    <task name="BeforePGO Save"/>
-    <task name="PoseGraphOptimization"/>
-    <task name="AfterPGO Save"/>
-    <task name="ToG2O Reverse"/>
     <task name="MapSave"/>
     
     <task name="ProxMatcher"/>

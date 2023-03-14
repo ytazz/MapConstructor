@@ -1,4 +1,5 @@
-<setting>
+<ku2022>
+  <!-- Load file settings -->
   <MapLoader
     name = "MapLoad"
     mapNum = "6"
@@ -19,6 +20,7 @@
                   ProxFile = "../data/ku2022_16_prox.csv" />
   </MapLoader>
 
+  <!-- Save file settings -->
   <MapSaver
     name = "MapSave"
     mapNum = "6"
@@ -45,39 +47,44 @@
                   AbsProxFile = "../data/ku2022_16_SPROX_absprox.csv" />
   </MapSaver>
 
+  <!-- G2O file Load & Save file name -->
   <G2OFileIO
     name = "PoseGraph"
     LoadFileName = "../data/before_ku2022.g2o"
     SaveFileName = "../data/after_ku2022_SPROX.g2o"
     />
 
+  <!-- G2O file Save file name  Before optimization -->
   <G2OFileIO
     name = "BeforePGO"
     SaveFileName = "../data/before_ku2022.g2o"
     />
 
+  <!-- G2O file Save file name  After optimization -->
   <G2OFileIO
     name = "AfterPGO"
     SaveFileName = "../data/after_ku2022_SPROX.g2o"
     />
 
+  <!-- Pose-Graph Optimization by G2O -->
   <MapOptimizer
     name = "PoseGraphOptimization"
     ItrNum = "0"
     />
 
+  <!-- Convert map data to G2O data -->
   <ToG2OConverter
     name = "ToG2O"
     >
-    <Node Tag = "VERTEX_PROX"/>
+    <Node Tag = "VERTEX_PROX"/> <!-- Nodes type -->
     <Odom Tag = "EDGE_SE2"
       poseRef-InfoGain  = "100 100 1"
       infoLimit         = "10^8 10^8 10^8"
-      />
+      /> <!-- Odometry edges type -->
     <Loop Tag = "EDGE_SWITCH_PROX"
       proxSim-InfoGain = "-1"
       switchInfo       = "0.3"
-      />
+      /> <!-- Loop edges type -->
   </ToG2OConverter>
   <!--
     <Loop Tag = "EDGE_M_Est_PROX"
@@ -103,24 +110,28 @@
                      "GemanMcClure"
   -->
 
+  <!-- Pre-processing to align the direction of time series data -->
   <MapDirPrepro
     name     = "MapDirPrepro"
     clacSimEqMethod = "LDLT"
-    />  
+    />
+
+  <Provisional name = "Provisional"/>
   
+
+  <!-- Processing sequence -->
   <SEQUENCE>
-    <task name="MapLoad"/>
-    <task name="MapDirPrepro"/>
-    <task name="ToG2O Forward"/>
-    <task name="BeforePGO Save"/>
-    <task name="PoseGraphOptimization"/>
-    <task name="AfterPGO Save"/>
-    <task name="ToG2O Reverse"/>
-    <task name="MapSave"/>
+    <task name="MapLoad"/>               <!-- Load map file -->
+    <task name="MapDirPrepro"/>          <!-- Pre-processing -->
+    <task name="ToG2O Forward"/>         <!-- Convert to G2O format -->
+    <task name="BeforePGO Save"/>        <!-- Save G2O file before optimization -->
+    <task name="PoseGraphOptimization"/> <!-- Pose-graph optimization by G2O -->
+    <task name="AfterPGO Save"/>         <!-- Save G2O file after optimization -->
+    <task name="ToG2O Reverse"/>         <!-- Apply optimization results on the map -->
+    <task name="MapSave"/>               <!-- Save map file -->
     <!--
-    
     <task name="PoseGraph Load"/>
     <task name="PoseGraph Save"/>
     -->
   </SEQUENCE>
-</setting>
+</ku2022>

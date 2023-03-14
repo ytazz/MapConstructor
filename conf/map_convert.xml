@@ -1,0 +1,45 @@
+<map_convert>
+  <MapLoader
+    name = "MapLoad"
+    mapNum = "3"
+    delim = ","
+    loadFormat = "Loc Prox Match"
+    MatchFile   = "../data/nc2021_match.csv"
+    >
+    <Map ID = "1"
+      LocFile      = "../data/nc2021_A_loc.csv"
+      ProxFile     = "../data/nc2021_A_prox.csv"
+      />
+    <Map ID = "2"
+      LocFile      = "../data/nc2021_B_loc.csv"
+      ProxFile     = "../data/nc2021_B_prox.csv"
+      />
+    <Map ID = "3"
+      LocFile      = "../data/nc2021_D_loc.csv"
+      ProxFile     = "../data/nc2021_D_prox.csv"
+      />
+  </MapLoader>
+
+  <MapSaver
+    name = "MapSave"
+    mapNum = "3"
+    saveFormat = "AbsProx LocMatch AbsProxMatch"
+    LocMatchFile     = "../data/nc2021_locmatch.csv"
+    AbsProxMatchFile = "../data/nc2021_absproxmatch.csv"
+    >
+    <Map ID = "1"
+      AbsProxFile  = "../data/nc2021_A_absprox.csv"
+      />
+    <Map ID = "2"
+      AbsProxFile  = "../data/nc2021_B_absprox.csv"
+      />
+    <Map ID = "3"
+      AbsProxFile  = "../data/nc2021_D_absprox.csv"
+      />
+  </MapSaver>  
+  
+  <SEQUENCE>
+    <task name="MapLoad"/>
+    <task name="MapSave"/>
+  </SEQUENCE>
+</map_convert>

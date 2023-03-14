@@ -19,6 +19,7 @@ using namespace Scenebuilder;
 namespace MapConstructor {
 
 bool MapSaver::LocSaver(int mapID) {
+	// Find a map with mapID registered (if not, don't save)
 	Map* map = maps->FindById(mapID);
 	if (!map)
 		return false;
@@ -292,7 +293,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 	setting->Get<vec2_t>(PosOffset, ".PosOffset");
 	string formatLine;
 	setting->Get<string>(formatLine, ".saveFormat");
-	vector<string> format = split(formatLine, ' ');
+	vector<string> format = split(formatLine, ' '); // Set the format to save
 
 	string filename;
 	for (int i = 0; i < mapNum; i++) {
@@ -311,7 +312,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 
 		filename = "";
 		for (string form : format)
-			if (form == "Loc") {
+			if (form == "Loc") { // Save robot pose
 				MapSetting->Get<string>(filename, ".LocFile");
 				if (filename != "") {
 					cout << form << " ";
@@ -324,7 +325,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 
 		filename = "";
 		for (string form : format)
-			if (form == "Movement") {
+			if (form == "Movement") { // Save odometry
 				MapSetting->Get<string>(filename, ".MovementFile");
 				if (filename != "") {
 					cout << form << " ";
@@ -337,7 +338,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 
 		filename = "";
 		for (string form : format)
-			if (form == "Prox") {
+			if (form == "Prox") { // Save proximity-point position
 				MapSetting->Get<string>(filename, ".ProxFile");
 				if (filename != "") {
 					cout << form << " ";
@@ -350,7 +351,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 
 		filename = "";
 		for (string form : format)
-			if (form == "Geo") {
+			if (form == "Geo") { // Save RTK positioning data
 				MapSetting->Get<string>(filename, ".GeoFile");
 				if (filename != "") {
 					cout << form << " ";
@@ -363,7 +364,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 
 		filename = "";
 		for (string form : format)
-			if (form == "AbsProx") {
+			if (form == "AbsProx") { // Absolute coordinate proximity-point position (for gnuplot)
 				MapSetting->Get<string>(filename, ".AbsProxFile");
 				if (filename != "") {
 					cout << form << " ";
@@ -376,7 +377,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 
 		filename = "";
 		for (string form : format)
-			if (form == "LocGeo") {
+			if (form == "LocGeo") { // RTK positioning at map coordinate (for gnuplot)
 				MapSetting->Get<string>(filename, ".LocGeoFile");
 				if (filename != "") {
 					cout << form << " ";
@@ -394,7 +395,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 
 	filename = "";
 	for (string form : format)
-		if (form == "Match") {
+		if (form == "Match") { // Save loop constraint by proximity-point pair
 			setting->Get<string>(filename, ".MatchFile");
 			if (filename != "") {
 				cout << form << " ";
@@ -407,7 +408,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 
 	filename = "";
 	for (string form : format)
-		if (form == "PoseRef") {
+		if (form == "PoseRef") { // Save loop constraint by relative pose
 			setting->Get<string>(filename, ".PoseRefFile");
 			if (filename != "") {
 				cout << form << " ";
@@ -420,7 +421,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 
 	filename = "";
 	for (string form : format)
-		if (form == "LocMatch") {
+		if (form == "LocMatch") { // Save absolute coordinate node pair (for gnuplot)
 			setting->Get<string>(filename, ".LocMatchFile");
 			if (filename != "") {
 				cout << form << " ";
@@ -433,7 +434,7 @@ int MapSaver::Task(int argc, const char* argv[]) {
 
 	filename = "";
 	for (string form : format)
-		if (form == "AbsProxMatch") {
+		if (form == "AbsProxMatch") { // Save absolute coordinate prox pair (for gnuplot)
 			setting->Get<string>(filename, ".AbsProxMatchFile");
 			if (filename != "") {
 				cout << form << " ";

@@ -28,8 +28,6 @@ MapConstructor::Matches matches;
 Scenebuilder::XML setting;
 g2o::SparseOptimizer optimizer;
 
-// #define TaskOverride(str) new MapConstructor::##str(&maps, &matches)
-
 int sequencer(Scenebuilder::XMLNode* TASKS) {
 	vector<int> ID;
 	setting.GetChildren(setting.GetRoot(), ID);

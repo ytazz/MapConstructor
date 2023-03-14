@@ -17,7 +17,8 @@ using namespace Scenebuilder;
 
 namespace MapConstructor {
 
-GaussNewton::GaussNewton(const int param, const int error) : Itr(0), Obj(DBL_MAX), PrevObj(DBL_MAX), clacSimEqMethod(0){
+// Constructor  Set the number of dimensions of each member variable and a solving sparse linear-equations
+GaussNewton::GaussNewton(const int param, const int error, const int method) : Itr(0), Obj(DBL_MAX), PrevObj(DBL_MAX), clacSimEqMethod(method) {
 	Param.resize(param);
 	Param.setZero();
 	Omega.resize(error, error);
@@ -34,12 +35,10 @@ GaussNewton::GaussNewton(const int param, const int error) : Itr(0), Obj(DBL_MAX
 	Delta.setZero();
 	Fixed.resize(param);
 	std::fill(Fixed.begin(), Fixed.end(), false);
-}
-
-GaussNewton::GaussNewton(const int param, const int error, const int method) : GaussNewton(param, error){
 	clacSimEqMethod = method;
 }
 
+// Initialization
 bool GaussNewton::Init() {
 	CalcError();
 	CalcObj();
@@ -52,6 +51,7 @@ bool GaussNewton::Init() {
 	return true;
 }
 
+// Numerical differentiation of the error function to obtain the Jacobi matrix
 bool GaussNewton::CalcJacobi() {
 	VectorXd LError(Error.size()),
 		RError(Error.size());
@@ -73,17 +73,16 @@ bool GaussNewton::CalcJacobi() {
 	return true;
 }
 
-void GaussNewton::CalcHb() {
-	b = Jacobi.transpose() * Omega * Error;
-	H = Jacobi.transpose() * Omega * Jacobi;
-}
-
+// Calculate the objective function
 void GaussNewton::CalcObj() {
-	PrevObj = Obj;
+	PrevObj = Obj; // Stores the value of the previous objective function
 	Obj = Error.dot(Omega * Error);
 }
 
+// Calculate update
 bool GaussNewton::CalcDelta() {
+	b = Jacobi.transpose() * Omega * Error;
+	H = Jacobi.transpose() * Omega * Jacobi;
 	try {
 		switch (clacSimEqMethod) {
 		case ClacSimEqMethod::PartialPivLU:
@@ -122,6 +121,7 @@ bool GaussNewton::CalcDelta() {
 	return true;
 }
 
+// Update design variables
 bool GaussNewton::Update() {
 	for(int i = 0; i < Param.size(); i++)
 		if(!Fixed[i])
@@ -132,7 +132,6 @@ bool GaussNewton::Update() {
 int GaussNewton::Step() {
 	if (!CalcError()) return -1;
 	if (!CalcJacobi()) return -1;
-	CalcHb();
 	if (!CalcDelta()) return -1;
 	if (!Update()) return -1;
 	Itr++;
@@ -151,6 +150,7 @@ int GaussNewton::Loop() {
 	return flag;
 }
 
+// Reset the number of dimensions of design variables
 bool GaussNewton::resizeParam(const int param){
 	Param.resize(param);
 	Param.setZero();
@@ -169,6 +169,7 @@ bool GaussNewton::resizeParam(const int param){
 	return true;
 }
 
+// Reset the number of dimensions of error function
 bool GaussNewton::resizeError(const int error) {
 	Param.setZero();
 	Omega.resize(error, error);
@@ -184,6 +185,7 @@ bool GaussNewton::resizeError(const int error) {
 	return true;
 }
 
+// Fix the i-th design variable
 bool GaussNewton::setFixed(const int i) {
 	if (i < 0 || i >= Fixed.size())
 		return false;
@@ -191,6 +193,7 @@ bool GaussNewton::setFixed(const int i) {
 	return true;
 }
 
+// Free the i-th design variable
 bool GaussNewton::setFree(const int i) {
 	if (i < 0 || i >= Fixed.size())
 		return false;

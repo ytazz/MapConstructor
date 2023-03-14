@@ -19,12 +19,14 @@ using namespace Scenebuilder;
 namespace MapConstructor {
 
 int ToG2OConverter::Task(int argc, const char* argv[]) {
-	if (argc < 2 || string(argv[1]) == "Forward") {
+	if (argc < 2 || string(argv[1]) == "Forward") { // Register map data to G2O data
 		optimizer->clear();
 
 		for (Map* map : *maps) {
 			cout << "mapID : " << map->id << endl;
 			string tag;
+
+			// Register nodes of each time series data as the G2O vertex
 			XMLNode* NodeSetting;
 			try {
 				for (int i = 0;; i++) {
@@ -36,8 +38,9 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 				}
 			}
 			catch (...) { continue; }
+
 			NodeSetting->Get(tag, ".Tag");
-			if (tag == "VERTEX_SE2")
+			if (tag == "VERTEX_SE2") // Registered as 2D/3DOF robot pose node
 				for (Node* node : map->nodes) {
 					node->vertex = new VertexSE2;
 					SE2 pose(node->location.pose.Pos().X(), node->location.pose.Pos().Y(), node->location.pose.Ori().Rotation().Z());
@@ -47,7 +50,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 					if (vertexId <= node->index)
 						vertexId = node->index + 1;
 				}
-			else if (tag == "VERTEX_PROX")
+			else if (tag == "VERTEX_PROX") // Registered as 2D/3DOF robot pose and 2D proximity point position node
 				for (Node* node : map->nodes) {
 					node->vertex = new VertexProx;
 					SE2 pose(node->location.pose.Pos().X(), node->location.pose.Pos().Y(), node->location.pose.Ori().Rotation().Z());
@@ -64,6 +67,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 						vertexId = node->index + 1;
 				}
 
+			// Register odometry constraints of each time series data as the G2O edge
 			XMLNode* OdomSetting;
 			try {
 				for (int i = 0;; i++) {
@@ -75,9 +79,9 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 				}
 			}
 			catch (...) { continue; }
+
 			OdomSetting->Get(tag, ".Tag");
-			if (tag == "EDGE_SE2") {
-				mat3_t info = mat3_t::Zero();
+			if (tag == "EDGE_SE2") { // Registered as 2D/3DOF relative pose
 				vec3_t prInfoGain;
 				OdomSetting->Get<vec3_t>(prInfoGain, ".poseRef-InfoGain");
 				for (int i = 0; i < 3; i++)
@@ -98,11 +102,11 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 					Node* node = map->nodes[i];
 					node->movement.odometry.first = new EdgeSE2;
 					node->movement.odometry.second = nullptr;
-					Eigen::Matrix3d info = Eigen::Matrix3d::Zero();
 					vec2_t pos;
 					real_t angle(0.);
+					Eigen::Matrix3d info = Eigen::Matrix3d::Zero();
 					if (node->movement.poseRef == pose_t(vec3_t(NAN, NAN, NAN), quat_t(NAN, NAN, NAN, NAN)) ||
-						node->movement.prevNode == nullptr) {
+						node->movement.prevNode == nullptr) { // Using relative poses of nodes
 						Node* prevNode = map->nodes[i - 1];
 						pose_t poseRef3D = prevNode->location.pose.Inv() * node->location.pose;
 						pos = vec2_t{ poseRef3D.Pos().X(), poseRef3D.Pos().Y() };
@@ -113,7 +117,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 						node->movement.odometry.first->vertices()[0] = optimizer->vertex(prevNode->vertex->id());
 						node->movement.odometry.first->vertices()[1] = optimizer->vertex(node->vertex->id());
 					}
-					else {
+					else { // Using odometry information from the movement file
 						pos = vec2_t{ node->movement.poseRef.Pos().X(), node->movement.poseRef.Pos().Y() };
 						angle = WrapPi(node->movement.poseRef.Ori().Rotation().Z());
 						const array<int, 3> index = { 0, 1, 5 };
@@ -131,6 +135,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 			}
 		}
 
+		// Register loop constraints as the G2O edge
 		for (LoopMatch* lm : *matches) {
 			cout << "matchID : " << lm->id << endl;
 			string tag;
@@ -146,7 +151,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 			}
 			catch (...) { continue; };
 			LoopSetting->Get(tag, ".Tag");
-			if (tag == "EDGE_SE2") {
+			if (tag == "EDGE_SE2") { // Registered as 2D/3DOF relative pose
 				for (NodeMatch* nm : *lm) {
 					nm->locMatch.loop.first = new EdgeSE2;
 					nm->locMatch.loop.second = nullptr;
@@ -166,7 +171,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 					optimizer->addEdge(nm->locMatch.loop.first);
 				}
 			}
-			else if (tag == "EDGE_SWITCH_SE2") {
+			else if (tag == "EDGE_SWITCH_SE2") { // Registered as 2D/3DOF relative pose (Robustness by switch variables)
 				real_t SwitchInfo;
 				LoopSetting->Get<real_t>(SwitchInfo, ".switchInfo");
 				for (NodeMatch* nm : *lm) {
@@ -193,7 +198,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 					optimizer->addEdge(nm->locMatch.loop.first);
 				}
 			}
-			else if (tag == "EDGE_PROX") {
+			else if (tag == "EDGE_PROX") { // Registered as a proximity-point pair
 				real_t ProxSimGain = 1.;
 				LoopSetting->Get<real_t>(ProxSimGain, ".proxSim-InfoGain");
 				for (NodeMatch* nm : *lm)
@@ -211,7 +216,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 						optimizer->addEdge(pm->loop.first);
 					}
 			}
-			else if (tag == "EDGE_SWITCH_PROX") {
+			else if (tag == "EDGE_SWITCH_PROX") { // Registered as a proximity-point pair (Robustness by switch variables)
 				real_t ProxSimGain, SwitchInfo;
 				LoopSetting->Get<real_t>(ProxSimGain, ".proxSim-InfoGain");
 				LoopSetting->Get<real_t>(SwitchInfo, ".switchInfo");
@@ -234,7 +239,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 						optimizer->addEdge(pm->loop.first);
 					}
 			}
-			else if (tag == "EDGE_M_Est_PROX") {
+			else if (tag == "EDGE_M_Est_PROX") { // Registered as a proximity-point pair (Robustness by m-estimator)
 				string strRobustKernel;
 				real_t ProxSimGain, Delta;
 				LoopSetting->Get<real_t>(ProxSimGain, ".proxSim-InfoGain");
@@ -263,7 +268,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 		}
 	}
 
-	if (string(argv[1]) == "Reverse") {
+	if (string(argv[1]) == "Reverse") { // Reflect G2O vertex data in map node data
 		for (Map* map : *maps)
 			for (Node* node : map->nodes) {
 				SE2 pose2D(static_cast<VertexSE2*>(node->vertex)->estimate());

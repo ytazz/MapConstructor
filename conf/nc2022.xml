@@ -1,4 +1,4 @@
-<setting>
+<nc2022>
   <MapLoader
     name = "MapLoad"
     mapNum = "4"
@@ -200,4 +200,4 @@
     </task>    
     -->
   </SEQUENCE>
-</setting>
+</nc2022>

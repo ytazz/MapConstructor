@@ -58,7 +58,6 @@ public:
 	virtual bool Init();
 	virtual bool CalcError() { return 0; };
 	virtual bool CalcJacobi();
-	void CalcHb();
 	void CalcObj();
 	bool CalcDelta();
 	virtual bool Update();
@@ -82,8 +81,7 @@ public:
 	inline MatrixXd getH() const { return H; };
 	inline double getObj() const { return Obj; };
 
-	GaussNewton(const int param, const int error);
-	GaussNewton(const int param, const int error, const int method);
+	GaussNewton(const int param, const int error, const int method = 0);
 };
 
 }

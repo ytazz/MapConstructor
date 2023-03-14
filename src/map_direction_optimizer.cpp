@@ -18,15 +18,21 @@ using namespace std;
 using namespace Scenebuilder;
 
 namespace MapConstructor {
+// constructor  Sets the number of dimensions, etc. for the base class GaussNewton.
 MapDirectionOptimizer::MapDirectionOptimizer(const int param, const int error, const int method) : GaussNewton(param, error, method) {};
 
+// Initialization
 bool MapDirectionOptimizer::Init() {
+	// Reset the number of dimensions of the error function to the number of registered node pairs
 	resizeError(mprs.size());
 	Param.setZero();
 	Omega.setIdentity();
+	// Call Init() of base class GaussNewton
 	return GaussNewton::Init();
 }
 
+// Calculate the relationship between the directions of two time series data
+//  using the direction of travel between the node pair
 bool MapDirectionOptimizer::CalcError() {
 	int mapIdf, mapIdt;
 	real_t mapRef;
@@ -38,13 +44,13 @@ bool MapDirectionOptimizer::CalcError() {
 			Error(row) = 0.;
 		else
 			Error(row) = WrapPi(Param(mapIdt) - Param(mapIdf) + mapRef);
-			//Error(row) = 1. - cos(Param(mapIdt) - Param(mapIdf) + mapRef);
 	}
 	return true;
 }
 
 
 #ifdef USE_JACOBIFUNC
+// Calculate jacobi matrix without numerical differentiation
 bool MapDirectionOptimizer::CalcJacobi() {
 	int mapIdf, mapIdt;
 	real_t mapRef;
@@ -58,14 +64,13 @@ bool MapDirectionOptimizer::CalcJacobi() {
 		else {
 			Jacobi(row, mapIdf) = -1.;
 			Jacobi(row, mapIdt) = 1.;
-			//Jacobi(row, mapIdf) = -sin(Param(mapIdt) - Param(mapIdf) + mapRef);
-			//Jacobi(row, mapIdt) = sin(Param(mapIdt) - Param(mapIdf) + mapRef);
 		}
 	}
 	return true;
 }
 #endif
 
+// Update design variables
 bool MapDirectionOptimizer::Update() {
 	for (int i = 0; i < Param.size(); i++)
 		if (!Fixed[i])
@@ -73,6 +78,7 @@ bool MapDirectionOptimizer::Update() {
 	return true;
 }
 
+// Loop termination conditions
 bool MapDirectionOptimizer::TermCond() {
 	CalcError();
 	CalcObj();
@@ -80,6 +86,7 @@ bool MapDirectionOptimizer::TermCond() {
 	return false;
 }
 
+// Display variables for each loop
 inline void MapDirectionOptimizer::PrintParams() {
 	stringstream ss;
 	ss << "Itr:" << FIXEDINT(Itr, 3);
@@ -120,6 +127,7 @@ int MapDirectionPreprocess::Task(int argc, const char* argv[]) {
 	MapDirectionOptimizer mdo(maps->size(), 1, clacSimEqMethod);
 	for(LoopMatch* lm : *matches)
 		for (NodeMatch* nm : *lm) {
+			// Register the time-series data ID and directional difference to which each node pair belongs
 			mapPairRef mp;
 			mp.mapFrom = nm->f->map->id - 1;
 			mp.mapTo = nm->t->map->id - 1;
@@ -127,11 +135,10 @@ int MapDirectionPreprocess::Task(int argc, const char* argv[]) {
 			mdo.mprs.push_back(mp);
 		}
 	mdo.Init();
-	mdo.setFixed(0);
-	clock_t start_t = clock();
+	mdo.setFixed(0); // Fix the first time series data direction (Must always Fix one of the time series data direction)
 	mdo.Loop();
-	clock_t end_t = clock();
 
+	// Reflects optimization results in each time series data
 	for (int id = 0; id < maps->size(); id++)
 		for (Node* node : maps->at(id)->nodes)
 			node->location.pose = pose_t::Rot(mdo.getParam()(id), 'z') * node->location.pose;
