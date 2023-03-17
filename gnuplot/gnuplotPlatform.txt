@@ -1,7 +1,0 @@
-load "PoseGraph.txt"
-#load "ProxPosition.txt"
-#load "TimeSeriesData.txt"
-#load "UtilityPlot.txt"
-
-unset output
-unset terminal

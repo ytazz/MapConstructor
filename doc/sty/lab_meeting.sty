@@ -1,0 +1,202 @@
+%-----------------------------------------------------------------------------%
+%
+%【 TEX Style File for a Handout of Weekly Lab Metting 】
+%
+% last update: 2011/12/01 by Hiroki Dobashi
+%
+%-----------------------------------------------------------------------------%
+%
+\typeout{研究会配付資料用スタイルファイル}
+%
+%-----------------------------------------------------------------------------%
+% ページ設定
+%
+\sloppy
+\flushbottom				   % 各ページの高さを揃える
+\leftmargini	 	 2em
+\leftmarginv	 	.5em
+\leftmarginvi	 	.5em
+\oddsidemargin   	-1in	   % DVI原点からの左端余白(奇数ページ)
+\evensidemargin  	-1in	   % DVI原点からの左端余白(偶数ページ)
+\marginparwidth   	 0pt 	   % 傍注領域の横幅
+\marginparsep	  	 0pt 	   % 本文領域と傍注領域の間隔
+\textwidth	 	   257pt 	   % 本文領域の横幅
+\topmargin	  	    -1in	   % DVI原点からの上端余白
+\parindent         	10pt 	   % 本文インデント
+\hbadness	   	 =  1000	   % underfull/overfull error の基準値
+\tolerance     	 =  5000 	   % (Must be less than 10000=sloppy in Japanese)
+\hyphenpenalty   = 5000\relax  % ハイフネーションの抑制
+\exhyphenpenalty = 4000\relax  % ハイフネーションの抑制
+%
+\textheight   	 237.0mm	   % 本文領域高さ；297-25.0(上余白)-35.0(下余白)
+\textwidth    	 160.0mm 	   % 本文領域の横幅；= 210-25*2
+\headheight		  	 0mm	   % ヘッダーの高さ
+\headsep	   	 	 0mm 	   % ヘッダー下端と本文領域の間隔
+\footskip         	15mm	   % 本文領域とフッター下端の間隔
+%
+\addtolength{\topmargin}{25.0mm}   	 % 上端余白
+\addtolength{\oddsidemargin}{25.0mm} % 左(右)端余白
+%
+%
+%-----------------------------------------------------------------------------%
+% タイトル・ヘッダー
+%
+\def\headding#1{\gdef\@headding{#1}}
+%
+\def\@maketitle{
+	\newpage
+ 	\null
+ 	\begin{flushright}
+		\vskip -2em
+		{\@headding}
+	\end{flushright}
+ 	\vskip 2em
+%
+%	\vspace{0cm}
+%
+ 	\begin{center}
+ 		{\LARGE \@title \par} \vskip 1.5em {
+			\large \lineskip 1em
+			\begin{tabular}[t]{c}
+				\@author 
+ 			\end{tabular}\par
+		}
+    \end{center}
+	\par
+ 	\vskip 1em
+}
+%
+%
+%-----------------------------------------------------------------------------%
+% abst 環境の題目を 摘要 に変える
+%
+\def\abstract{
+	\if@twocolumn
+	\section*{Abstract}
+	\else \small 
+	\begin{center}
+		{\bf 摘要\vspace{-.5em}\vspace{0pt}} 
+	\end{center}
+	\quotation 
+	\fi
+}
+%
+%
+%-----------------------------------------------------------------------------%
+% 見出しの設定
+%
+\def\section{\@startsection {section}{1}
+	{\z@}                    	% インデント大きさ
+	{.5zh} 						% 見出し前スペース
+	{.5zh}						% 見出し後スペース
+	{\Large\bf}}				% 見出し書式
+%
+\def\subsection{\@startsection{subsection}{2}
+	{\z@}                    	% インデント大きさ
+	{.5zh} 					% 見出し前スペース
+	{.5zh}						% 見出し後スペース
+	{\large\bf}}				% 見出し書式
+%
+\def\subsubsection{\@startsection{subsubsection}{3}
+	{\z@}                       % インデント大きさ
+	{.5zh} 					% 見出し前スペース
+	{.5ex plus .2ex}			% 見出し後スペース
+	{\normalsize\bf}}			% 見出し書式
+%
+\def\paragraph{\@startsection{paragraph}{4}
+	{\z@}                       % インデント大きさ
+	{.5ex plus .3ex minus .2ex} % 見出し前スペース
+	{-1em}						% 見出し後スペース
+	{\normalsize\bf}}			% 見出し書式
+%
+\def\subparagraph{\@startsection{subparagraph}{4}
+	{\parindent}				% インデント大きさ
+	{.5ex plus .3ex minus .2ex} % 見出し前スペース
+	{-1em}						% 見出し後スペース
+	{\normalsize\bf}}			% 見出し書式
+%
+%
+%-----------------------------------------------------------------------------%
+% 図表の設定
+%
+\def\labfig#1{\label{fig:#1}}
+\def\labtab#1{\label{tab:#1}}
+\def\labeq#1{\label{eq:#1}}
+\def\reffig#1{{Fig.$\,$}\ref{fig:#1}}
+\def\reftab#1{{\bf Table }\ref{tab:#1}}
+\def\refeq#1{{\bf eq.}(\ref{eq:#1})}
+%
+\def\fnum@figure{{\bf\textrm{Fig.\,\thefigure}}} % 図ｷｬﾌﾟｼｮﾝ接頭語
+\def\fnum@table{{\bf\textrm{Table\,\thetable}}}  % 表ｷｬﾌﾟｼｮﾝ接頭語
+%
+\newif\if@paper \@papertrue
+%
+\long\def\@caption#1[#2]#3{\par
+ \begingroup
+  \@parboxrestore
+  \if@minipage
+   \@setminipage
+  \fi
+  %\small % ｷｬﾌﾟｼｮﾝのﾌｫﾝﾄｻｲｽﾞを指定
+  \@makecaption{\csname fnum@#1\endcsname}{\ignorespaces #3}\par
+ \endgroup}
+%
+\newdimen\capwidth
+\newbox\@tempboxb
+%
+% 図・表のｷｬﾌﾟｼｮﾝを作る命令
+%
+\long\def\@makecaption#1#2{
+ \vskip 5\p@
+ \setbox\@tempboxa\hbox{{\bf #1}\hskip1zw\shortstack[l]{#2}}%
+ \@tempdima\ht\@tempboxa \advance \@tempdima \dp\@tempboxa
+%
+ \setlength{\capwidth}{0.95\linewidth} % ｷｬﾌﾟｼｮﾝの1行あたりの長さを指定
+%
+ \ifdim \@tempdima > \baselineskip
+  \ifdim \wd\@tempboxa > \capwidth
+   \hfil\parbox[t]{\capwidth}{\hangindent\wd\@tempboxb 
+    {\bf #1}\hskip1zw\inhibitglue #2}%
+  \else
+   \hfil\parbox[t]{\wd\@tempboxa}{\hangindent\wd\@tempboxb 
+    {\bf #1}\hskip1zw\inhibitglue #2}%
+  \fi
+ \else
+  \ifdim \wd\@tempboxa > \capwidth
+   \hfil\parbox[t]{\capwidth}{\hangindent\wd\@tempboxb 
+    {\bf #1}\hskip1zw\inhibitglue #2}%
+  \else
+   \hbox to \hsize{\hss\box\@tempboxa\hss}%
+  \fi
+ \fi
+}
+%
+%
+%
+%-----------------------------------------------------------------------------%
+% 参考文献書式設定
+%
+\def\thebibliography#1{% 参考文献出力命令
+  \vskip 2zh plus .2ex minus .2ex 
+  \noindent{\Large\bf 参考文献}\par\@mkboth{References}{References}
+  \vskip 1zh
+  \list{[\arabic{enumi}]}		 % ラベルは [1], [2], ...
+    {\settowidth\labelwidth{#1)} % ラベルの幅は [引数]
+     \leftmargin\labelwidth		 % 左余白はラベル幅
+     \parsep  5pt plus 1pt minus 1pt
+     \itemsep 0pt plus 1pt minus 1pt
+     \advance \leftmargin by \labelsep % 左余白を \labelsep だけ増す
+     \usecounter{enumi}}			   % enumi カウンタで文献番号を数える
+  \def\newblock{\hskip .11em plus .33em minus .07em}%
+  									   % \newblock は若干の空きをあける命令  
+  \sloppy						   	   % 段落は多少空きが不揃いでもよい
+  \clubpenalty=4000 \widowpenalty=4000 % なるべく段落中の１行だけ別ページになら											 ないように
+  \sfcode`\.=1000\relax}			   % 上の解説参照
+\let\endthebibliography=\endlist	   % 終わりは list の終わりと同じ
+\def\@cite#1#2{[{#1\if@tempswa , #2\fi}]}
+%
+%\newcommand{\innerp}[2]{( \mbox{$#1$} | \, \mbox{$#2$} )}
+%\newcommand{\crossp}[2]{\mbox{$#1$} \times \mbox{$#2$}}
+%\newcommand{\mcrossp}[1]{\left[ \mbox{$#1$} \times \right]}
+%\newcommand{\dsqrt}[1]{\displaystyle{\sqrt{\mbox{$#1$}}}}
+%

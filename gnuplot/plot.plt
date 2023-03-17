@@ -1,2 +1,2 @@
-load "gnuplotPlatform.txt"
+load "platform.txt"
 pause -1

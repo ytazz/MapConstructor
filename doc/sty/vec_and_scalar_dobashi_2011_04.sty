@@ -1,0 +1,99 @@
+%-----------------------------------------------------------------------------%
+%
+%【ベクトル・行列・スカラ表記用LaTeXスタイルファイル】
+%
+%　last update：2011/04/22 by Hiroki Dobashi
+%
+%-----------------------------------------------------------------------------%
+%
+%【添え字なしベクトル・行列】
+%
+% ベクトル
+\def\vec#1{\mbox{\boldmath $#1$}}
+%
+% ベクトルの微分
+\def\dotvec#1{\dot{\mbox{\boldmath $#1$}}}
+%
+% ベクトルの2階微分
+\def\ddotvec#1{\ddot{\mbox{\boldmath $#1$}}}
+%
+%
+%-----------------------------------------------------------------------------%
+%
+%【添え字ありベクトル・行列（左肩上，右下ともにローマン体）】
+%
+% ベクトル
+\def\Vec#1#2#3{\ \!\!^{\scriptscriptstyle{\rm #1\!}}\vec{#2}_{\scriptscriptstyle{\rm #3}}}
+%
+% ベクトルの微分
+\def\dotVec#1#2#3{\ \!\!^{\scriptscriptstyle{\rm #1\!}}\dotvec{#2}_{\scriptscriptstyle{\rm #3}}}
+%
+% ベクトルの2階微分
+\def\ddotVec#1#2#3{\ \!\!^{\scriptscriptstyle{\rm #1\!}}\ddotvec{#2}_{\scriptscriptstyle{\rm #3}}}
+%
+%
+%-----------------------------------------------------------------------------%
+%
+%【添え字ありベクトル・行列（左肩上：ローマン体，右下：イタリック体）】
+%
+% ベクトル
+\def\Vecc#1#2#3{\ \!\!^{\scriptscriptstyle{\rm #1\!}}\vec{#2}_{\scriptscriptstyle{#3}}}
+%
+% ベクトルの微分
+\def\dotVecc#1#2#3{\ \!\!^{\scriptscriptstyle{\rm #1\!}}\dotvec{#2}_{\scriptscriptstyle{#3}}}
+%
+% ベクトルの2階微分
+\def\ddotVecc#1#2#3{\ \!\!^{\scriptscriptstyle{\rm #1\!}}\ddotvec{#2}_{\scriptscriptstyle{#3}}}
+%
+%
+%-----------------------------------------------------------------------------%
+%
+%【添え字ありベクトル・行列（左肩上，右下ともにイタリック体）】
+%
+% ベクトル
+\def\Veccc#1#2#3{\ \!\!^{\scriptscriptstyle{#1}}\vec{#2}_{\scriptscriptstyle{#3}}}
+%
+% ベクトルの微分
+\def\dotVeccc#1#2#3{\ \!\!^{\scriptscriptstyle{#1}}\dotvec{#2}_{\scriptscriptstyle{#3}}}
+%
+% ベクトルの2階微分
+\def\ddotVeccc#1#2#3{\ \!\!^{\scriptscriptstyle{#1}}\ddotvec{#2}_{\scriptscriptstyle{#3}}}
+%
+%
+%-----------------------------------------------------------------------------%
+%
+%【添え字ありスカラ（左肩上，右下ともにローマン体）】
+%
+% スカラ
+\def\sca#1#2#3{\ \!\!^{\scriptscriptstyle{\rm #1\!}}{\mbox{$#2$}}_{\scriptscriptstyle{\rm #3}}}
+%
+% スカラの微分
+\def\dotsca#1#2#3{\ \!\!^{\scriptscriptstyle{\rm #1\!}}{\dot{\mbox{$#2$}}}_{\scriptscriptstyle{\rm #3}}}
+%
+% スカラの2階微分
+\def\ddotsca#1#2#3{\ \!\!^{\scriptscriptstyle{\rm #1\!}}{\ddot{\mbox{$#2$}}}_{\scriptscriptstyle{\rm #3}}}
+%
+%
+%-----------------------------------------------------------------------------%
+%
+%【添え字ありスカラ（左肩上，右下ともにイタリック体）】
+%
+% スカラ
+\def\scaaa#1#2#3{\ \!\!^{\scriptscriptstyle{#1\!}}{\mbox{$#2$}}_{\scriptscriptstyle{#3}}}
+%
+% スカラの微分
+\def\dotscaaa#1#2#3{\ \!\!^{\scriptscriptstyle{#1\!}}{\dot{\mbox{$#2$}}}_{\scriptscriptstyle{#3}}}
+%
+% スカラの2階微分
+\def\ddotscaaa#1#2#3{\ \!\!^{\scriptscriptstyle{#1\!}}{\ddot{\mbox{$#2$}}}_{\scriptscriptstyle{#3}}}
+%
+%
+%-----------------------------------------------------------------------------%
+%
+% 【おまけ】
+\def\marugaiseki{\textcircled{\small $\times$}}
+%
+%
+%
+%
+%

@@ -49,9 +49,3 @@ plot \
 (("../data/".Env).("_D_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#0000ff" title "Time series data C", \
 (("../data/".Env).("_B_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#800080" title "Time series data B", \
 (("../data/".Env).("_A_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#ff0000" title "Time series data A"
-
-
-#	(("../data/".Env).("_7_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 15 lc rgb "#c0c0c0" title "Time series data D", \
-#	(("../data/".Env).("_6_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 9 lc rgb "#808080" title "Time series data C", \
-#	(("../data/".Env).("_2_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 5 lc rgb "#404040" title "Time series data B", \
-#	(("../data/".Env).("_1_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#000000" title "Time series data A"

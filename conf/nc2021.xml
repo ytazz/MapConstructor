@@ -145,9 +145,9 @@
   heightRange = "0.7 1.0"
   countSkip = "1"
   distSkip = "0.5"
-  ignoreRatio = "0.05 0.6"
   ICPItr = "10"
   maxItr = "10"
+  ignoreRatio = "0.05 0.6"
     >
     <Match/>
   </ScanMatcher>
@@ -164,6 +164,8 @@
     <task name="ToG2O Reverse"/>
     <task name="MapSave"/>
     <!--
+    
+    Pose-graph optimization using relative poses with scan matching.
     <task name="MapLoad"/>
     <task name="ScanMatcher"/>
     <task name="PoseRefSave"/>

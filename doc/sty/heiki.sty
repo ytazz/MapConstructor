@@ -1,0 +1,18 @@
+\def\fnum@Jfigure{}\hspace{-2mm}} 
+\def\fnum@Efigure{Fig.\hspace{-2mm}} 
+\def\fnum@Jtable{•\\hspace{-2mm}} 
+\def\fnum@Etable{Table\hspace{-2mm}} 
+
+\newcommand{\dcaption}[2]{ 
+\addtocounter{\@captype}{1} 
+\vskip\abovecaptionskip 
+\begin{center} 
+% “ú–{Œê 
+\csname fnum@J\@captype \endcsname~ 
+{\bf \csname the\@captype \endcsname} #1 \\ 
+% ‰pŒê 
+{\bf \csname fnum@E\@captype \endcsname~ 
+\csname the\@captype \endcsname} #2 
+\end{center} 
+\vskip\belowcaptionskip 
+} 
