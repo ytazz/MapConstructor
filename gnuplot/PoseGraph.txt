@@ -33,32 +33,49 @@ set origin 0.13,0.13
 set xtics offset 0,0.4
 set ytics offset 0.4,0
 
-#set nokey
 set xrange [-40:140]
 set yrange [-180:20]
 set xtics 40
 set ytics 40
+set size ratio -1
+
 set key right top
 #set key left top
 #set key right bottom
 #set key at 50,-70
 #set key invert
-set size ratio -1
 
 
 plot \
-(("../data/".Env).("_16_".Tag))."_absprox.csv" every :10 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#c080c0" notitle, \
-(("../data/".Env).("_15_".Tag))."_absprox.csv" every :10 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#8080ff" notitle, \
-(("../data/".Env).("_14_".Tag))."_absprox.csv" every :10 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#80c0c0" notitle, \
-(("../data/".Env).("_13_".Tag))."_absprox.csv" every :10 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#80ff80" notitle, \
-(("../data/".Env).("_12_".Tag))."_absprox.csv" every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#c0c080" notitle, \
-(("../data/".Env).("_11_".Tag))."_absprox.csv" every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#ff8080" notitle, \
-(("../data/".Env).("_16_".Tag))."_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#ff00ff" notitle, \
-(("../data/".Env).("_15_".Tag))."_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#0000ff" notitle, \
-(("../data/".Env).("_14_".Tag))."_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#00ffff" notitle, \
-(("../data/".Env).("_13_".Tag))."_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#00ff00" notitle, \
-(("../data/".Env).("_12_".Tag))."_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#ffff00" notitle, \
-(("../data/".Env).("_11_".Tag))."_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#ff0000" notitle
+("../data/".Env)."_11_11_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_11_12_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_11_13_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_11_16_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_12_12_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_12_13_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_12_14_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_12_16_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_13_13_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_13_14_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_13_16_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_14_14_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_14_15_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_14_16_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_15_15_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_15_16_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_16_16_SPROX_absproxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#800000" notitle, \
+("../data/".Env)."_16_SPROX_absprox.csv" every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#c080c0" notitle, \
+("../data/".Env)."_15_SPROX_absprox.csv" every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#8080ff" notitle, \
+("../data/".Env)."_14_SPROX_absprox.csv" every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#80c0c0" notitle, \
+("../data/".Env)."_13_SPROX_absprox.csv" every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#80ff80" notitle, \
+("../data/".Env)."_12_SPROX_absprox.csv" every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#c0c080" notitle, \
+("../data/".Env)."_11_SPROX_absprox.csv" every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#ff8080" notitle, \
+("../data/".Env)."_16_SPROX_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#ff00ff" notitle, \
+("../data/".Env)."_15_SPROX_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#0000ff" notitle, \
+("../data/".Env)."_14_SPROX_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#00ffff" notitle, \
+("../data/".Env)."_13_SPROX_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#00ff00" notitle, \
+("../data/".Env)."_12_SPROX_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#ffff00" notitle, \
+("../data/".Env)."_11_SPROX_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#ff0000" notitle
 
 
 #	(("../data/_".Env).("_D_".Tag))."_absprox.csv" every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#8080ff"  notitle, \

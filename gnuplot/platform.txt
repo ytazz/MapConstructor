@@ -1,5 +1,5 @@
-load "TimeSeriesData.txt"
-#load "PoseGraph.txt"
+#load "TimeSeriesData.txt"
+load "PoseGraph.txt"
 #load "ProxPosition.txt"
 #load "Utility.txt"
 
