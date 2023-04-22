@@ -46,6 +46,6 @@ set key invert
 set size ratio -1
 
 plot \
-(("../data/".Env).("_D_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#0000ff" title "Time series data C", \
+(("../data/".Env).("_C_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#0000ff" title "Time series data C", \
 (("../data/".Env).("_B_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#800080" title "Time series data B", \
 (("../data/".Env).("_A_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#ff0000" title "Time series data A"

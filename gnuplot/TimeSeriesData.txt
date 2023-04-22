@@ -45,44 +45,9 @@ set key left top
 #set key at 50,-50
 set key invert
 
-GeoFileName = ("../data/".BaseName)."_locgeo.csv"
-ProxFileName = ("../data/".BaseName)."_absprox.csv"
-LocFileName = ("../data/".BaseName)."_loc.csv"
 
-plot \
-("../data/".Env)."_16_absprox.csv" every :10 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#c080c0" notitle, \
-("../data/".Env)."_15_absprox.csv" every :10 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#8080ff" notitle, \
-("../data/".Env)."_14_absprox.csv" every :10 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#80c0c0" notitle, \
-("../data/".Env)."_13_absprox.csv" every :10 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#80ff80" notitle, \
-("../data/".Env)."_12_absprox.csv" every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#c0c080" notitle, \
-("../data/".Env)."_11_absprox.csv" every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#ff8080" notitle, \
-("../data/".Env)."_16_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#ff00ff" notitle, \
-("../data/".Env)."_15_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#0000ff" notitle, \
-("../data/".Env)."_14_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#00ffff" notitle, \
-("../data/".Env)."_13_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#00ff00" notitle, \
-("../data/".Env)."_12_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#ffff00" notitle, \
-("../data/".Env)."_11_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#ff0000" notitle
+#plot for [i = 3:1:-1] sprintf("..\/data\/%s_%d_absprox.csv", Env, i) every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb proxClr[i] notitle, \
+#	for [i = 3:1:-1] sprintf("..\/data\/%s_%d_loc.csv", Env, i) every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb locClr[i] notitle
 
-
-#	("../data/".Env)."_7_absprox.csv" every :10::5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#80a0ff" notitle, \
-#	("../data/".Env)."_6_absprox.csv" every :10::0 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#a080c0" notitle, \
-#	("../data/".Env)."_2_absprox.csv" every :10::5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#c080a0" notitle, \
-#	("../data/".Env)."_1_absprox.csv" every :10::0 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#ff8080" notitle, \
-#	("../data/".Env)."_7_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#0000ff" title "Time series data D", \
-#	("../data/".Env)."_6_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#400080" title "Time series data C", \
-#	("../data/".Env)."_2_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#800040" title "Time series data B", \
-#	("../data/".Env)."_1_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#ff0000" title "Time series data A"
-
-
-#	("../data/".Env)."_AB_proxmatch.csv" every :5 using (X($4,$5)):(Y($4,$5)) with lines lw 0.5 lc rgb "#00ff00" notitle, \
-#	("../data/".Env)."_B_absprox.csv" every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#c080c0" notitle, \
-#	("../data/".Env)."_A_absprox.csv" every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#ff8080" notitle, \
-#	("../data/".Env)."_B_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#800080" title "Time series data B", \
-#	("../data/".Env)."_A_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#ff0000" title "Time series data A"
-
-#	("../data/".Env)."_D_absprox.csv" every :15::10 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 9 lc rgb "#a0a0a0" notitle, \
-#	("../data/".Env)."_B_absprox.csv" every :15::5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 5 lc rgb "#a0a0a0" notitle, \
-#	("../data/".Env)."_A_absprox.csv" every :15::0 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#a0a0a0" notitle, \
-#	("../data/".Env)."_D_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines dt (6,2) lw 7 lc rgb "#000000" title "Time series data C", \
-#	("../data/".Env)."_B_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines dt (3,1) lw 7 lc rgb "#000000" title "Time series data B", \
-#	("../data/".Env)."_A_loc.csv" every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb "#000000" title "Time series data A"
+plot for [i = 6:1:-1] sprintf("..\/data\/%s_1%d_absprox.csv", Env, i) every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb proxClr[i] notitle, \
+	for [i = 6:1:-1] sprintf("..\/data\/%s_1%d_loc.csv", Env, i) every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb locClr[i] notitle
