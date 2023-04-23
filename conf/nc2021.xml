@@ -9,24 +9,42 @@
     PoseRefFile = "../data/nc2021_SM_poseref.csv"
     >
     <Map ID = "1"
-      LocFile      = "../data/nc2021_A_loc.csv"
-      ProxFile     = "../data/nc2021_A_prox.csv"
-      MovementFile = "../data/nc2021_A_movement.csv"
-      PCFile       = "../data/nc2021_A_pc.csv"
+      LocFile      = "../data/nc2021_1_loc.csv"
+      ProxFile     = "../data/nc2021_1_prox.csv"
+      MovementFile = "../data/nc2021_1_movement.csv"
+      PCFile       = "../data/nc2021_1_pc.csv"
       />
     <Map ID = "2"
-      LocFile      = "../data/nc2021_B_loc.csv"
-      ProxFile     = "../data/nc2021_B_prox.csv"
-      MovementFile = "../data/nc2021_B_movement.csv"
-      PCFile       = "../data/nc2021_B_pc.csv"
+      LocFile      = "../data/nc2021_2_loc.csv"
+      ProxFile     = "../data/nc2021_2_prox.csv"
+      MovementFile = "../data/nc2021_2_movement.csv"
+      PCFile       = "../data/nc2021_2_pc.csv"
       />
     <Map ID = "3"
-      LocFile      = "../data/nc2021_D_loc.csv"
-      ProxFile     = "../data/nc2021_D_prox.csv"
-      MovementFile = "../data/nc2021_D_movement.csv"
-      PCFile       = "../data/nc2021_D_pc.csv"
+      LocFile      = "../data/nc2021_3_loc.csv"
+      ProxFile     = "../data/nc2021_3_prox.csv"
+      MovementFile = "../data/nc2021_3_movement.csv"
+      PCFile       = "../data/nc2021_3_pc.csv"
       />
   </MapLoader>
+
+  <MapSaver
+    name = "MapSave_"
+    mapNum = "3"
+    saveFormat = "AbsProx LocMatch AbsProxMatch"
+    LocMatchFile     = "../data/nc2021_locmatch.csv"
+    AbsProxMatchFile = "../data/nc2021_absproxmatch.csv"
+    >
+    <Map ID = "1"
+      AbsProxFile  = "../data/nc2021_1_absprox.csv"
+      />
+    <Map ID = "2"
+      AbsProxFile  = "../data/nc2021_2_absprox.csv"
+      />
+    <Map ID = "3"
+      AbsProxFile  = "../data/nc2021_3_absprox.csv"
+      />
+  </MapSaver>
 
   <!-- Save file settings -->
   <MapSaver
@@ -39,22 +57,22 @@
     PoseRefFile      = "../data/nc2021_SM_poseref.csv"
     >
     <Map ID = "1"
-      LocFile      = "../data/nc2021_A_SPROX_loc.csv"
-      ProxFile     = "../data/nc2021_A_SPROX_prox.csv"
-      AbsProxFile  = "../data/nc2021_A_SPROX_absprox.csv"
-      MovementFile = "../data/nc2021_A_movement.csv"
+      LocFile      = "../data/nc2021_1_SPROX_loc.csv"
+      ProxFile     = "../data/nc2021_1_SPROX_prox.csv"
+      AbsProxFile  = "../data/nc2021_1_SPROX_absprox.csv"
+      MovementFile = "../data/nc2021_1_movement.csv"
       />
     <Map ID = "2"
-      LocFile      = "../data/nc2021_B_SPROX_loc.csv"
-      ProxFile     = "../data/nc2021_B_SPROX_prox.csv"
-      AbsProxFile  = "../data/nc2021_B_SPROX_absprox.csv"
-      MovementFile = "../data/nc2021_B_movement.csv"
+      LocFile      = "../data/nc2021_2_SPROX_loc.csv"
+      ProxFile     = "../data/nc2021_2_SPROX_prox.csv"
+      AbsProxFile  = "../data/nc2021_2_SPROX_absprox.csv"
+      MovementFile = "../data/nc2021_2_movement.csv"
       />
     <Map ID = "3"
-      LocFile      = "../data/nc2021_D_SPROX_loc.csv"
-      ProxFile     = "../data/nc2021_D_SPROX_prox.csv"
-      AbsProxFile  = "../data/nc2021_D_SPROX_absprox.csv"
-      MovementFile = "../data/nc2021_D_movement.csv"
+      LocFile      = "../data/nc2021_3_SPROX_loc.csv"
+      ProxFile     = "../data/nc2021_3_SPROX_prox.csv"
+      AbsProxFile  = "../data/nc2021_3_SPROX_absprox.csv"
+      MovementFile = "../data/nc2021_3_movement.csv"
       />
   </MapSaver>
 
@@ -86,7 +104,7 @@
   <!-- G2O file Save file name  After optimization -->
   <G2OFileIO
     name = "AfterPGO"
-    SaveFileName = "../data/afte_nc2021_SPROX.g2o"
+    SaveFileName = "../data/after_nc2021_SPROX.g2o"
     />
 
   <!-- Pose-Graph Optimization by G2O -->
@@ -101,28 +119,35 @@
     >
     <Node Tag = "VERTEX_PROX"/>
     <Odom Tag = "EDGE_SE2"
-      poseRef-InfoGain  = "100 100 1"
+      poseRef-InfoGain  = "30 30 0.3"
       movement-InfoGain = "1 1 1"
       infoLimit         = "10^8 10^8 10^3"
       />
     <Loop Tag = "EDGE_SWITCH_PROX"
-      proxSim-InfoGain = "-0.05"
-      switchInfo       = "0.2"
+      proxSim-InfoGain = "-0.2"
+      switchInfo       = "0.20"
       />
   </ToG2OConverter>
 
+  <Loop Tag = "EDGE_M_Est_PROX"
+    proxSim-InfoGain = "-0.2"
+    robustKernel = "GemanMcClure"
+    robustKernelDelta = "1"
+      />
+  
   <!-- Convert map data to G2O data -->
   <ToG2OConverter
     name = "_ToG2O"
     >
-    <Node Tag = "VERTEX_PROX"/>
+    <Node Tag = "VERTEX_SE2"/>
     <Odom Tag = "EDGE_SE2"
-      poseRef-InfoGain  = "100 100 100"
+      poseRef-InfoGain  = "30 30 0.3"
       movement-InfoGain = "1 1 1"
       infoLimit         = "10^8 10^8 10^3"
       />
     <Loop Tag = "EDGE_SWITCH_SE2"
-      switchInfo       = "0.2"
+      SE2InfoGain      = "0.01"
+      switchInfo       = "1"
       />
   </ToG2OConverter>
 
@@ -157,6 +182,7 @@
   
   <SEQUENCE>
     <task name="MapLoad"/>
+    <task name="MapSave_"/>
     <task name="ToG2O Forward"/>
     <task name="BeforePGO Save"/>
     <task name="PoseGraphOptimization"/>

@@ -88,7 +88,7 @@
   </ToG2OConverter>
   <!--
     <Loop Tag = "EDGE_M_Est_PROX"
-      proxSimGain = "-1"
+      proxSim-InfoGain = "-1"
       robustKernel = "Huber"
       robustKernelDelta = "1"
       />

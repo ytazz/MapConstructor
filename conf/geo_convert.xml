@@ -7,13 +7,13 @@
     loadFormat = "Geo"
     >
     <Map ID = "1"
-      GeoFile      = "../data/nc2021_A_geo.csv"
+      GeoFile      = "../data/nc2021_1_geo.csv"
       />
     <Map ID = "2"
-      GeoFile      = "../data/nc2021_B_geo.csv"
+      GeoFile      = "../data/nc2021_2_geo.csv"
       />
     <Map ID = "3"
-      GeoFile      = "../data/nc2021_D_geo.csv"
+      GeoFile      = "../data/nc2021_3_geo.csv"
       />
   </MapLoader>
 
@@ -28,16 +28,16 @@
     PosOffset = "0 0"
     >
     <Map ID = "1"
-      GeoFile      = "../data/nc2021_A_geo_.csv"
-      LocGeoFile   = "../data/nc2021_A_locgeo.csv"
+      GeoFile      = "../data/nc2021_1_geo_.csv"
+      LocGeoFile   = "../data/nc2021_1_locgeo.csv"
       />
     <Map ID = "2"
-      GeoFile      = "../data/nc2021_B_geo_.csv"
-      LocGeoFile   = "../data/nc2021_B_locgeo.csv"
+      GeoFile      = "../data/nc2021_2_geo_.csv"
+      LocGeoFile   = "../data/nc2021_2_locgeo.csv"
       />
     <Map ID = "3"
-      GeoFile      = "../data/nc2021_D_geo_.csv"
-      LocGeoFile   = "../data/nc2021_D_locgeo.csv"
+      GeoFile      = "../data/nc2021_3_geo_.csv"
+      LocGeoFile   = "../data/nc2021_3_locgeo.csv"
       />
   </MapSaver>
   

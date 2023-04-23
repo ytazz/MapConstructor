@@ -1,9 +1,9 @@
 OutputTerm = 3
-Env = "_nc2021"
-Tag = "SSE2"
+Env = "nc2021"
+Tag = "SPROX"
 BaseName = (Env."_").Tag
 set encoding utf8
-angle = 115*pi/180
+angle = 120*pi/180
 X(x,y) = (x*cos(angle)-y*sin(angle))
 Y(x,y) = (x*sin(angle)+y*cos(angle))
 
@@ -39,13 +39,13 @@ set yrange [-40:0]
 set ytics 10
 #set key left top
 #set key right top
-set key left bottom
+#set key left bottom
 #set key right bottom
-#set key at 50,-70
+set key at 92,-32
 set key invert
 set size ratio -1
 
-plot \
-(("../data/".Env).("_C_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#0000ff" title "Time series data C", \
-(("../data/".Env).("_B_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#800080" title "Time series data B", \
-(("../data/".Env).("_A_".Tag))."_absprox.csv" using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#ff0000" title "Time series data A"
+array proxClr[3] = ["#0000ff", "#800080", "#ff0000"]
+array Title[3] = ["Time series data A", "Time series data B", "Time series data C"]
+
+plot for [i = 3:1:-1] sprintf("..\/data\/%s_%d_%s_absprox.csv", Env, i, Tag) using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb proxClr[i] title Title[i]

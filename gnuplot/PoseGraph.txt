@@ -1,10 +1,10 @@
 OutputTerm = 3
 Mono = 0
-Env = "ku2022"
+Env = "nc2021"
 Tag = "SPROX"
 BaseName = (Env."_").Tag
 set encoding utf8
-angle = 0*pi/180
+angle = 120*pi/180
 X(x,y) = (x*cos(angle)-y*sin(angle))
 Y(x,y) = (x*sin(angle)+y*cos(angle))
 
@@ -34,10 +34,10 @@ set xtics offset 0,0.4
 set ytics offset 0.4,0
 
 #set nokey
-set xrange [-40:140]
-set yrange [-180:20]
-set xtics 40
-set ytics 40
+set xrange [-75:150]
+set yrange [-150:50]
+set xtics 50
+set ytics 50
 set key right top
 #set key left top
 #set key right bottom
@@ -45,11 +45,15 @@ set key right top
 #set key invert
 set size ratio -1
 
-array proxClr[6] = ["#ff8080", "#c0c080", "#80ff80", "#80c0c0", "#8080ff", "#c080c0"]
-array locClr[6]  = ["#ff0000", "#ffff00", "#00ff00", "#00ffff", "#0000ff", "#ff00ff"]
+#array proxClr[6] = ["#ff8080", "#c0c080", "#80ff80", "#80c0c0", "#8080ff", "#c080c0"]
+#array locClr[6]  = ["#ff0000", "#ffff00", "#00ff00", "#00ffff", "#0000ff", "#ff00ff"]
+array proxClr[3] = ["#ff8080", "#c080c0", "#8080ff"]
+array geoClr[3] = ["#00c040", "#00ff00", "#40c000"]
+array locClr[3]  = ["#ff0000", "#ff00ff", "#0000ff"]
 
-#plot for [i = 3:1:-1] sprintf("..\/data\/%s_%d_%s_absprox.csv", Env, i, Tag) every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb proxClr[i] notitle, \
-#	for [i = 3:1:-1] sprintf("..\/data\/%s_%d_%s_loc.csv", Env, i, Tag) every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb locClr[i] notitle
+plot for [i = 3:1:-1] sprintf("..\/data\/%s_%d_%s_absprox.csv", Env, i, Tag) every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb proxClr[i] notitle, \
+	for [i = 3:1:-1] sprintf("..\/data\/%s_%d_locgeo.csv", Env, i) every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb geoClr[i] title "Ground-truth", \
+	for [i = 3:1:-1] sprintf("..\/data\/%s_%d_%s_loc.csv", Env, i, Tag) every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb locClr[i] title "Pose-graph"
 
-plot for [i = 6:1:-1] sprintf("..\/data\/%s_1%d_%s_absprox.csv", Env, i, Tag) every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb proxClr[i] notitle, \
-	for [i = 6:1:-1] sprintf("..\/data\/%s_1%d_%s_loc.csv", Env, i, Tag) every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb locClr[i] notitle
+#plot for [i = 6:1:-1] sprintf("..\/data\/%s_1%d_%s_absprox.csv", Env, i, Tag) every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb proxClr[i] notitle, \
+#	for [i = 6:1:-1] sprintf("..\/data\/%s_1%d_%s_loc.csv", Env, i, Tag) every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb locClr[i] notitle

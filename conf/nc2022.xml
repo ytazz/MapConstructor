@@ -20,18 +20,39 @@
       PCFile       = "../data/nc2022_2_pc.csv"
       />
     <Map ID = "3"
-      LocFile      = "../data/nc2022_6_loc.csv"
-      ProxFile     = "../data/nc2022_6_prox.csv"
-      MovementFile = "../data/nc2022_6_movement.csv"
-      PCFile       = "../data/nc2022_6_pc.csv"
+      LocFile      = "../data/nc2022_3_loc.csv"
+      ProxFile     = "../data/nc2022_3_prox.csv"
+      MovementFile = "../data/nc2022_3_movement.csv"
+      PCFile       = "../data/nc2022_3_pc.csv"
       />
     <Map ID = "4"
-      LocFile      = "../data/nc2022_7_loc.csv"
-      ProxFile     = "../data/nc2022_7_prox.csv"
-      MovementFile = "../data/nc2022_7_movement.csv"
-      PCFile       = "../data/nc2022_7_pc.csv"
+      LocFile      = "../data/nc2022_4_loc.csv"
+      ProxFile     = "../data/nc2022_4_prox.csv"
+      MovementFile = "../data/nc2022_4_movement.csv"
+      PCFile       = "../data/nc2022_4_pc.csv"
       />
   </MapLoader>
+
+  <MapSaver
+    name = "MapSave_"
+    mapNum = "4"
+    saveFormat = "AbsProx LocMatch AbsProxMatch"
+    MatchFile        = "../data/nc2022_locmatch.csv"
+    AbsProxMatchFile = "../data/nc2022_absproxmatch.csv"
+    >
+    <Map ID = "1"
+      AbsProxFile  = "../data/nc2022_1_absprox.csv"
+      />
+    <Map ID = "2"
+      AbsProxFile  = "../data/nc2022_2_absprox.csv"
+      />
+    <Map ID = "3"
+      AbsProxFile  = "../data/nc2022_3_absprox.csv"
+      />
+    <Map ID = "4"
+      AbsProxFile  = "../data/nc2022_4_absprox.csv"
+      />
+  </MapSaver>
 
   <MapSaver
     name = "MapSave"
@@ -55,16 +76,16 @@
       MovementFile = "../data/nc2022_2_movement.csv"
       />
     <Map ID = "3"
-      LocFile      = "../data/nc2022_6_SPROX_loc.csv"
-      ProxFile     = "../data/nc2022_6_SPROX_prox.csv"
-      AbsProxFile  = "../data/nc2022_6_SPROX_absprox.csv"
-      MovementFile = "../data/nc2022_6_movement.csv"
+      LocFile      = "../data/nc2022_3_SPROX_loc.csv"
+      ProxFile     = "../data/nc2022_3_SPROX_prox.csv"
+      AbsProxFile  = "../data/nc2022_3_SPROX_absprox.csv"
+      MovementFile = "../data/nc2022_3_movement.csv"
       />
     <Map ID = "4"
-      LocFile      = "../data/nc2022_7_SPROX_loc.csv"
-      ProxFile     = "../data/nc2022_7_SPROX_prox.csv"
-      AbsProxFile  = "../data/nc2022_7_SPROX_absprox.csv"
-      MovementFile = "../data/nc2022_7_movement.csv"
+      LocFile      = "../data/nc2022_4_SPROX_loc.csv"
+      ProxFile     = "../data/nc2022_4_SPROX_prox.csv"
+      AbsProxFile  = "../data/nc2022_4_SPROX_absprox.csv"
+      MovementFile = "../data/nc2022_4_movement.csv"
       />
   </MapSaver>
 
@@ -81,7 +102,7 @@
 
   <G2OFileIO
     name = "AfterPGO"
-    SaveFileName = "../data/afte_nc2022_SPROX.g2o"
+    SaveFileName = "../data/after_nc2022_SPROX.g2o"
     />
 
   <MapOptimizer
@@ -175,6 +196,7 @@
 
   <SEQUENCE>
     <task name="MapLoad"/>
+    <task name="MapSave_"/>
     <task name="ToG2O Forward"/>
     <task name="BeforePGO Save"/>
     <task name="PoseGraphOptimization"/>

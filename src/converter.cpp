@@ -152,6 +152,8 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 			catch (...) { continue; };
 			LoopSetting->Get(tag, ".Tag");
 			if (tag == "EDGE_SE2") { // Registered as 2D/3DOF relative pose
+				real_t SE2InfoGain;
+				LoopSetting->Get<real_t>(SE2InfoGain, ".SE2InfoGain");
 				for (NodeMatch* nm : *lm) {
 					nm->locMatch.loop.first = new EdgeSE2;
 					nm->locMatch.loop.second = nullptr;
@@ -163,7 +165,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 					const array<int, 3> index = { 0, 1, 5 };
 					for (int i = 0; i < 3; i++)
 						for (int j = 0; j < 3; j++)
-							info(i, j) = nm->locMatch.info[index[i]][index[j]];
+							info(i, j) = SE2InfoGain * nm->locMatch.info[index[i]][index[j]];
 					nm->locMatch.loop.first->vertices()[0] = optimizer->vertex(nm->f->vertex->id());
 					nm->locMatch.loop.first->vertices()[1] = optimizer->vertex(nm->t->vertex->id());
 					static_cast<EdgeSE2*>(nm->locMatch.loop.first)->setMeasurement(poseRef);
@@ -172,6 +174,8 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 				}
 			}
 			else if (tag == "EDGE_SWITCH_SE2") { // Registered as 2D/3DOF relative pose (Robustness by switch variables)
+				real_t SE2InfoGain;
+				LoopSetting->Get<real_t>(SE2InfoGain, ".SE2InfoGain");
 				real_t SwitchInfo;
 				LoopSetting->Get<real_t>(SwitchInfo, ".switchInfo");
 				for (NodeMatch* nm : *lm) {
@@ -188,7 +192,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 					const array<int, 3> index = { 0, 1, 5 };
 					for (int i = 0; i < 3; i++)
 						for (int j = 0; j < 3; j++)
-							info(i, j) = nm->locMatch.info[index[i]][index[j]];
+							info(i, j) = SE2InfoGain * nm->locMatch.info[index[i]][index[j]];
 					info(3, 3) = SwitchInfo;
 					nm->locMatch.loop.first->vertices()[0] = optimizer->vertex(nm->f->vertex->id());
 					nm->locMatch.loop.first->vertices()[1] = optimizer->vertex(nm->t->vertex->id());

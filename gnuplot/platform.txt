@@ -1,8 +1,8 @@
 #load "TimeSeriesData.txt"
-#load "PoseGraph.txt"
+load "PoseGraph.txt"
 #load "LoopConstraint.txt"
 #load "TimeSeriesData3D.txt"
-load "PoseGraph3D.txt"
+#load "PoseGraph3D.txt"
 #load "ProxPosition.txt"
 #load "Utility.txt"
 
