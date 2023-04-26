@@ -282,6 +282,41 @@ bool MapSaver::AbsProxMatchSaver() {
 	return true;
 }
 
+bool MapSaver::SwitchVarSaver() {
+	saveFile << "map1, count1, time1, map2, count2, time2, "
+		<< "match_id, match_size, match_score, match_reverse, switch_variable(node_match), match_nprox, "
+		<< "prox1_id, prox2_id, similarity1, similarity2, switch_variable(prox_match), " << endl;
+	for (LoopMatch* lm : *matches)
+		for (NodeMatch* nm : *lm) {
+			if (!nm->proxMatches.size())
+				continue;
+			saveFile << nm->f->map->id << ", "
+				<< nm->f->count << ", "
+				<< nm->f->time << ", "
+				<< nm->t->map->id << ", "
+				<< nm->t->count << ", "
+				<< nm->t->time << ", "
+				<< lm->id << ", "
+				<< lm->size() << ", "
+				<< lm->score << ", "
+				<< lm->reverse << ", ";
+			if(nm->locMatch.loop.second)
+				saveFile << static_cast<VertexSwitch*>(nm->locMatch.loop.second)->estimate() << ", ";
+			else
+				saveFile << "-, ";
+			saveFile << nm->proxMatches.size() << ", ";
+			for (ProxMatch* pm : nm->proxMatches)
+				if(pm->loop.second)
+					saveFile << pm->f->id << ", "
+					<< pm->t->id << ", "
+					<< pm->similarity[0] << ", "
+					<< pm->similarity[1] << ", "
+					<< static_cast<VertexSwitch*>(pm->loop.second)->estimate() << ", ";
+			saveFile << endl;
+		}
+	return true;
+}
+
 
 int MapSaver::Task(int argc, const char* argv[]) {
 	int mapNum = 0;
@@ -440,6 +475,19 @@ int MapSaver::Task(int argc, const char* argv[]) {
 				cout << form << " ";
 				saveFile.open(filename);
 				AbsProxMatchSaver();
+				saveFile.close();
+			}
+			break;
+		}
+
+	filename = "";
+	for (string form : format)
+		if (form == "SwitchVar") { // Save loop constraint by proximity-point pair
+			setting->Get<string>(filename, ".SwitchVarFile");
+			if (filename != "") {
+				cout << form << " ";
+				saveFile.open(filename);
+				SwitchVarSaver();
 				saveFile.close();
 			}
 			break;

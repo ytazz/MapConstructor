@@ -50,10 +50,11 @@
   <MapSaver
     name = "MapSave"
     mapNum = "3"
-    saveFormat = "Loc AbsProx LocMatch AbsProxMatch"
+    saveFormat = "Loc AbsProx LocMatch AbsProxMatch SwitchVar"
     MatchFile        = "../data/nc2021_SPROX_match.csv"
     LocMatchFile     = "../data/nc2021_SPROX_locmatch.csv"
     AbsProxMatchFile = "../data/nc2021_SPROX_absproxmatch.csv"
+    SwitchVarFile    = "../data/nc2021_SPROX_switchvar.csv"
     PoseRefFile      = "../data/nc2021_SM_poseref.csv"
     >
     <Map ID = "1"
@@ -129,11 +130,13 @@
       />
   </ToG2OConverter>
 
+  <!--
   <Loop Tag = "EDGE_M_Est_PROX"
     proxSim-InfoGain = "-0.2"
     robustKernel = "GemanMcClure"
     robustKernelDelta = "1"
       />
+      -->
   
   <!-- Convert map data to G2O data -->
   <ToG2OConverter

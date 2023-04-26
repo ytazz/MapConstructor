@@ -57,7 +57,7 @@ int sequencer(Scenebuilder::XMLNode* TASKS) {
 				for (string& str : task_str)
 					task_ch.push_back(str.c_str());
 				const int argc(task_str.size());
-				const char** argv = new (const char*);
+				const char** argv = (const char**)calloc(task_ch.size(), sizeof(char*));
 				std::copy(task_ch.begin(), task_ch.end(), argv);
 				const string task_name = setting.GetNode(ID[j])->name;
 				try {
