@@ -6,15 +6,15 @@ set encoding utf8
 
 if (OutputTerm  == 1){
 	set term pngcairo color size 2000,2000 enhanced font ",24"
-	set output ("fig/".BaseName)."_1.png"
+	set output ("fig/".BaseName).".png"
 }
 if (OutputTerm  == 2){
 	set term postscript eps color size 4.5in,3in enhanced font ",18"
-	set output ("fig/".BaseName)."_1.eps"
+	set output ("fig/".BaseName).".eps"
 }
 if (OutputTerm  == 3){
 	set term svg size 1000,1000 font ",30"
-	set output ("fig/".BaseName)."_1.svg"
+	set output ("fig/".BaseName).".svg"
 }
 
 set xlabel 'x [m]' #offset 0,1
@@ -65,33 +65,7 @@ set ticslevel 0
 set view equal xy
 set view 60, 45, 1.2, 0.6
 
-splot for [i = 1:11] sprintf("..\/data\/%s_1%d_1%d_%s_absproxmatch.csv", Env, loopPair[2*i-1], loopPair[2*i], Tag) every :10 using (X($4,$5)):(Y($4,$5)):($1 > 0 ? Z[$1] : 1/0) with lines lw 0.5 lc rgb loopClr[i] notitle, \
+splot sprintf("..\/data\/%s_%s_absproxmatch.csv", Env, Tag) every 1 using (X($4,$5)):(Y($4,$5)):($1 > 0 ? Z[$1] : 1/0) with lines lw 0.5 lc rgb loopClr[1] notitle, \
 	for [i = 5:1:-1] sprintf("..\/data\/%s_1%d_%s_absprox.csv", Env, i, Tag) every :10 using (X($3,$4)):(Y($3,$4)):(Z[i]) with point ps 0.3 pt 7 lc rgb proxClr[i] notitle, \
 	for [i = 5:1:-1] sprintf("..\/data\/%s_1%d_%s_loc.csv", Env, i, Tag) every 5 using (X($3,$4)):(Y($3,$4)):(Z[i]) with lines lw 7 lc rgb locClr[i] notitle
 
-
-
-if (OutputTerm  == 1){
-	set term pngcairo color size 2000,2000 enhanced font ",24"
-	set output ("fig/".BaseName)."_2.png"
-}
-if (OutputTerm  == 2){
-	set term postscript eps color size 4.5in,3in enhanced font ",18"
-	set output ("fig/".BaseName)."_2.eps"
-}
-if (OutputTerm  == 3){
-	set term svg size 1000,1000 font ",30"
-	set output ("fig/".BaseName)."_2.svg"
-}
-
-do for [i = 1:5]{
-	Z[i] = 5
-}
-set zrange [ Z[6]:Z[1] ]
-set view 60, 45, 1.2, 0.15
-
-splot sprintf("..\/data\/%s_1%d_%s_absprox.csv", Env, 6, Tag) every :10 using (X($3,$4)):(Y($3,$4)):(Z[6]) with point ps 0.3 pt 7 lc rgb proxClr[6] notitle, \
-	sprintf("..\/data\/%s_1%d_%s_loc.csv", Env, 6, Tag) every 5 using (X($3,$4)):(Y($3,$4)):(Z[6]) with lines lw 7 lc rgb locClr[6] notitle, \
-	for [i = 12:17] sprintf("..\/data\/%s_1%d_1%d_%s_absproxmatch.csv", Env, loopPair[2*i-1], loopPair[2*i], Tag) every :10 using (X($4,$5)):(Y($4,$5)):($1 > 0 ? Z[$1] : 1/0) with lines lw 0.5 lc rgb loopClr[i] notitle, \
-	for [i = 5:1:-1] sprintf("..\/data\/%s_1%d_%s_absprox.csv", Env, i, Tag) every :10 using (X($3,$4)):(Y($3,$4)):(Z[i]) with point ps 0.3 pt 7 lc rgb proxClr[i] notitle, \
-	for [i = 5:1:-1] sprintf("..\/data\/%s_1%d_%s_loc.csv", Env, i, Tag) every 5 using (X($3,$4)):(Y($3,$4)):(Z[i]) with lines lw 7 lc rgb locClr[i] notitle

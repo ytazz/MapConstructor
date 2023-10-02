@@ -283,6 +283,38 @@ bool MapSaver::AbsProxMatchSaver() {
 }
 
 bool MapSaver::SwitchVarSaver() {
+	saveFile << "map_id1, map_id2, node_id1, node_id2, prox_id1, prox_id2, e1, e2, enorm, s" << endl;
+
+	for (LoopMatch* lm : *matches){
+		for (NodeMatch* nm : *lm) {
+			for (ProxMatch* pm : nm->proxMatches){
+			
+				auto edg = static_cast<EdgeSwitchProx*>(pm->loop.first);
+				auto vtx = static_cast<VertexSwitch*>(pm->loop.second);
+
+				double s  = vtx->estimate();
+
+				// error() is multiplied by s, so divide it by s to get raw error value
+				double e1 = edg->error()(0,0)/s;
+				double e2 = edg->error()(1,0)/s;
+
+				saveFile
+					<< nm->f->map->id   << ", "
+					<< nm->t->map->id   << ", "
+					<< nm->f->count     << ", "
+					<< nm->t->count     << ", "
+					<< pm->f->id        << ", "
+					<< pm->t->id        << ", "
+					<< e1 << ", " 
+					<< e2 << ", "
+					<< sqrt(e1*e1 + e2*e2) << ", "
+					<< s  << ", "
+					<< endl;
+			}
+		}
+	}
+
+	/*
 	saveFile << "map1, count1, time1, map2, count2, time2, "
 		<< "match_id, match_size, match_score, match_reverse, switch_variable(node_match), match_nprox, "
 		<< "prox1_id, prox2_id, similarity1, similarity2, switch_variable(prox_match), " << endl;
@@ -314,10 +346,54 @@ bool MapSaver::SwitchVarSaver() {
 					<< static_cast<VertexSwitch*>(pm->loop.second)->estimate() << ", ";
 			saveFile << endl;
 		}
+	*/
 	return true;
 }
+/*
+bool MapSaver::SwitchVarSordedSaver() {
+	saveFile << "map_id1, map_id2, node_id1, node_id2, prox_id1, prox_id2, e1, e2, s" << endl;
 
+	struct Row {
+		int mapId[2];
+		int nodeId[2];
+		int proxId[2];
+		double e[2];
+		double s;
+	};
+	vector<Row> rows;
 
+	for (LoopMatch* lm : *matches) {
+		for (NodeMatch* nm : *lm) {
+			for (ProxMatch* pm : nm->proxMatches) {
+
+				auto edg = static_cast<EdgeSwitchProx*>(pm->loop.first);
+				auto vtx = static_cast<VertexSwitch*>(pm->loop.second);
+
+				double s = vtx->estimate();
+
+				// error() is multiplied by s, so divide it by s to get raw error value
+				double e1 = edg->error()(0, 0) / s;
+				double e2 = edg->error()(1, 0) / s;
+
+				Row r;
+				r.mapId[0] = nm->f->map->id;
+				r.mapId[1] = nm->t->map->id;
+				r.nodeId[0] = nm->f->count;
+				r.nodeId[1] = nm->t->count;
+				r.proxId[0] = pm->f->id;
+				r.proxId[1] = pm->t->id;
+				r.e[0] = e1;
+				r.e[1] = e2;
+				r.s = s;
+
+				rows.push_back(r);
+			}
+		}
+	}
+
+	sort(rows.begin(), rows.end(), 
+}
+*/
 int MapSaver::Task(int argc, const char* argv[]) {
 	int mapNum = 0;
 	setting->Get<int>(mapNum, ".mapNum");

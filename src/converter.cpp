@@ -38,7 +38,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 				}
 			}
 			catch (...) { continue; }
-
+			
 			NodeSetting->Get(tag, ".Tag");
 			if (tag == "VERTEX_SE2") // Registered as 2D/3DOF robot pose node
 				for (Node* node : map->nodes) {
@@ -54,7 +54,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 				for (Node* node : map->nodes) {
 					node->vertex = new VertexProx;
 					SE2 pose(node->location.pose.Pos().X(), node->location.pose.Pos().Y(), node->location.pose.Ori().Rotation().Z());
-					std::vector<Vector2> pp;
+					std::vector<Vector2, Eigen::aligned_allocator<Vector2> > pp;
 					for (int i = 0; i < node->proximities.size(); i++) {
 						node->proximities[i]->index = i;
 						pp.push_back(Vector2(node->proximities[i]->pos.X(), node->proximities[i]->pos.Y()));
@@ -66,7 +66,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 					if (vertexId <= node->index)
 						vertexId = node->index + 1;
 				}
-
+			
 			// Register odometry constraints of each time series data as the G2O edge
 			XMLNode* OdomSetting;
 			try {
@@ -83,11 +83,11 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 			OdomSetting->Get(tag, ".Tag");
 			if (tag == "EDGE_SE2") { // Registered as 2D/3DOF relative pose
 				vec3_t prInfoGain;
-				OdomSetting->Get<vec3_t>(prInfoGain, ".poseRef-InfoGain");
+				OdomSetting->Get<vec3_t>(prInfoGain, ".poseRefInfoGain");
 				for (int i = 0; i < 3; i++)
 					prInfoGain[i] = min(prInfoGain[i], 1e+8);
 				vec3_t _mInfoGain;
-				OdomSetting->Get<vec3_t>(_mInfoGain, ".movement-InfoGain");
+				OdomSetting->Get<vec3_t>(_mInfoGain, ".movementInfoGain");
 				for (int i = 0; i < 3; i++)
 					_mInfoGain[i] = min(_mInfoGain[i], 1e+8);
 				mat3_t mInfoGain;
@@ -96,6 +96,8 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 						mInfoGain[i][j] = sqrt(_mInfoGain[i] * _mInfoGain[j]);
 				vec3_t InfoLimit;
 				OdomSetting->Get<vec3_t>(InfoLimit, ".infoLimit");
+				real_t rotScale;
+				OdomSetting->Get<real_t>(rotScale, ".rotScale");
 				for (int i = 0; i < 3; i++)
 					InfoLimit[i] = min(max(InfoLimit[i], 1e-8), 1e+8);
 				for (int i = 1; i < map->nodes.size(); i++) {
@@ -110,7 +112,9 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 						Node* prevNode = map->nodes[i - 1];
 						pose_t poseRef3D = prevNode->location.pose.Inv() * node->location.pose;
 						pos = vec2_t{ poseRef3D.Pos().X(), poseRef3D.Pos().Y() };
-						angle = WrapPi(poseRef3D.Ori().Rotation().Z());
+
+						// multiply rotation with manually-tuned scaling factor
+						angle = WrapPi(poseRef3D.Ori().Rotation().Z())*rotScale;
 						info(0, 0) = pos.x != 0. ? min(prInfoGain[0] / (pos.x * pos.x), InfoLimit[0]) : InfoLimit[0];
 						info(1, 1) = pos.y != 0. ? min(prInfoGain[1] / (pos.y * pos.y), InfoLimit[1]) : InfoLimit[1];
 						info(2, 2) = angle != 0. ? min(prInfoGain[2] / (angle * angle), InfoLimit[2]) : InfoLimit[2];
@@ -204,7 +208,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 			}
 			else if (tag == "EDGE_PROX") { // Registered as a proximity-point pair
 				real_t ProxSimGain = 1.;
-				LoopSetting->Get<real_t>(ProxSimGain, ".proxSim-InfoGain");
+				LoopSetting->Get<real_t>(ProxSimGain, ".proxSimInfoGain");
 				for (NodeMatch* nm : *lm)
 					for (ProxMatch* pm : nm->proxMatches) {
 						Eigen::Matrix2d info = Eigen::Matrix2d::Zero();
@@ -222,7 +226,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 			}
 			else if (tag == "EDGE_SWITCH_PROX") { // Registered as a proximity-point pair (Robustness by switch variables)
 				real_t ProxSimGain, SwitchInfo;
-				LoopSetting->Get<real_t>(ProxSimGain, ".proxSim-InfoGain");
+				LoopSetting->Get<real_t>(ProxSimGain, ".proxSimInfoGain");
 				LoopSetting->Get<real_t>(SwitchInfo, ".switchInfo");
 				for (NodeMatch* nm : *lm)
 					for (ProxMatch* pm : nm->proxMatches) {
@@ -246,7 +250,7 @@ int ToG2OConverter::Task(int argc, const char* argv[]) {
 			else if (tag == "EDGE_M_Est_PROX") { // Registered as a proximity-point pair (Robustness by m-estimator)
 				string strRobustKernel;
 				real_t ProxSimGain, Delta;
-				LoopSetting->Get<real_t>(ProxSimGain, ".proxSim-InfoGain");
+				LoopSetting->Get<real_t>(ProxSimGain, ".proxSimInfoGain");
 				LoopSetting->Get<string>(strRobustKernel, ".robustKernel");
 				LoopSetting->Get<real_t>(Delta, ".robustKernelDelta");
 				for (NodeMatch* nm : *lm)

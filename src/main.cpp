@@ -56,8 +56,10 @@ int sequencer(Scenebuilder::XMLNode* TASKS) {
 				vector<const char*> task_ch;
 				for (string& str : task_str)
 					task_ch.push_back(str.c_str());
+
 				const int argc(task_str.size());
-				const char** argv = (const char**)calloc(task_ch.size(), sizeof(char*));
+				const char** argv = new const char*[task_ch.size()];
+
 				std::copy(task_ch.begin(), task_ch.end(), argv);
 				const string task_name = setting.GetNode(ID[j])->name;
 				try {
@@ -86,6 +88,8 @@ int sequencer(Scenebuilder::XMLNode* TASKS) {
 					task->Task(argc, argv);
 				}
 				catch (...) { return -1; };
+
+				delete[] argv;
 			}
 		}
 	}

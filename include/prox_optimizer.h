@@ -19,7 +19,7 @@ class ProximityMatcher : public GaussNewton {
 public:
 	Vector2d pos_reff;
 	double ang_reff;
-	vector<Vector2d> prox[2];
+	vector<Vector2d, Eigen::aligned_allocator<Vector2d> > prox[2];
 	vector<int> pp[2];
 	vector<double> omega;
 	int maxItr;

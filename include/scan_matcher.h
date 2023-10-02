@@ -21,7 +21,7 @@ public:
 	double ang_reff;
 	PointCloud* pc[2];
 	real_t ignoreRatio;
-	vector<vector<Vector2d>> nps2D;
+	vector< vector<Vector2d, Eigen::aligned_allocator<Vector2d> > > nps2D;
 	int ignoreNum;
 	int maxItr;
 

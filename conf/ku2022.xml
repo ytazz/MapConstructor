@@ -22,11 +22,53 @@
 
   <!-- Save file settings -->
   <MapSaver
-    name = "MapSave"
+    name = "MapSave_"
     mapNum = "6"
     saveFormat = "Loc AbsProx LocMatch AbsProxMatch"
-    LocMatchFile              = "../data/ku2022_SPROX_locmatch.csv"
-    AbsProxMatchFile          = "../data/ku2022_SPROX_absproxmatch.csv" >
+    LocMatchFile              = "../data/ku2022_locmatch.csv"
+    AbsProxMatchFile          = "../data/ku2022_absproxmatch.csv" >
+    <Map ID = "1" AbsProxFile = "../data/ku2022_11_absprox.csv" />
+    <Map ID = "2" AbsProxFile = "../data/ku2022_12_absprox.csv" />
+    <Map ID = "3" AbsProxFile = "../data/ku2022_13_absprox.csv" />
+    <Map ID = "4" AbsProxFile = "../data/ku2022_14_absprox.csv" />
+    <Map ID = "5" AbsProxFile = "../data/ku2022_15_absprox.csv" />
+    <Map ID = "6" AbsProxFile = "../data/ku2022_16_absprox.csv" />
+  </MapSaver>
+
+  <MapSaver
+    name = "MapSavePrepro"
+    mapNum = "6"
+    saveFormat = "Loc AbsProx LocMatch AbsProxMatch"
+    LocMatchFile              = "../data/ku2022_SPROX_prepro_locmatch.csv"
+    AbsProxMatchFile          = "../data/ku2022_SPROX_prepro_absproxmatch.csv" >
+    <Map ID = "1" LocFile     = "../data/ku2022_11_SPROX_prepro_loc.csv"
+                  ProxFile    = "../data/ku2022_11_SPROX_prepro_prox.csv"
+                  AbsProxFile = "../data/ku2022_11_SPROX_prepro_absprox.csv" />
+    <Map ID = "2" LocFile     = "../data/ku2022_12_SPROX_prepro_loc.csv"
+                  ProxFile    = "../data/ku2022_12_SPROX_prepro_prox.csv"
+                  AbsProxFile = "../data/ku2022_12_SPROX_prepro_absprox.csv" />
+    <Map ID = "3" LocFile     = "../data/ku2022_13_SPROX_prepro_loc.csv"
+                  ProxFile    = "../data/ku2022_13_SPROX_prepro_prox.csv"
+                  AbsProxFile = "../data/ku2022_13_SPROX_prepro_absprox.csv" />
+    <Map ID = "4" LocFile     = "../data/ku2022_14_SPROX_prepro_loc.csv"
+                  ProxFile    = "../data/ku2022_14_SPROX_prepro_prox.csv"
+                  AbsProxFile = "../data/ku2022_14_SPROX_prepro_absprox.csv" />
+    <Map ID = "5" LocFile     = "../data/ku2022_15_SPROX_prepro_loc.csv"
+                  ProxFile    = "../data/ku2022_15_SPROX_prepro_prox.csv"
+                  AbsProxFile = "../data/ku2022_15_SPROX_prepro_absprox.csv" />
+    <Map ID = "6" LocFile     = "../data/ku2022_16_SPROX_prepro_loc.csv"
+                  ProxFile    = "../data/ku2022_16_SPROX_prepro_prox.csv"
+                  AbsProxFile = "../data/ku2022_16_SPROX_prepro_absprox.csv" />
+  </MapSaver>
+
+  <MapSaver
+    name = "MapSave"
+    mapNum = "6"
+    saveFormat = "Loc AbsProx LocMatch AbsProxMatch SwitchVar"
+    LocMatchFile     = "../data/ku2022_SPROX_locmatch.csv"
+    AbsProxMatchFile = "../data/ku2022_SPROX_absproxmatch.csv"
+    SwitchVarFile    = "../data/ku2022_SPROX_switchvar_sconst.csv" 
+    >
     <Map ID = "1" LocFile     = "../data/ku2022_11_SPROX_loc.csv"
                   ProxFile    = "../data/ku2022_11_SPROX_prox.csv"
                   AbsProxFile = "../data/ku2022_11_SPROX_absprox.csv" />
@@ -77,14 +119,33 @@
     name = "ToG2O"
     >
     <Node Tag = "VERTEX_PROX"/> <!-- Nodes type -->
+    <!-- Odometry edges type -->
     <Odom Tag = "EDGE_SE2"
-      poseRef-InfoGain  = "100 100 1"
-      infoLimit         = "10^8 10^8 10^8"
-      /> <!-- Odometry edges type -->
+      poseRefInfoGain  = "100 100 1"
+      infoLimit        = "10^8 10^8 10^8"
+      rotScale         ="1.0"
+      />
+    <!-- Loop edges type -->
     <Loop Tag = "EDGE_SWITCH_PROX"
-      proxSim-InfoGain = "-1"
-      switchInfo       = "0.3"
-      /> <!-- Loop edges type -->
+      proxSimInfoGain = "-1"
+      switchInfo       = "100"
+      />
+    <!--
+      -->
+    <!--
+    <Loop Tag = "EDGE_M_Est_PROX"
+      proxSimInfoGain = "-1"
+      robustKernel = "Huber"
+      robustKernelDelta = "1"
+      />
+      -->
+    <!--
+    <Loop Tag = "EDGE_M_Est_PROX"
+      proxSimInfoGain = "-1"
+      robustKernel = "GemanMcClure"
+      robustKernelDelta = "1"
+      />
+      -->
   </ToG2OConverter>
   <!--
     <Loop Tag = "EDGE_M_Est_PROX"
@@ -122,7 +183,9 @@
   <!-- Processing sequence -->
   <SEQUENCE>
     <task name="MapLoad"/>               <!-- Load map file -->
+    <task name="MapSave_"/>              <!-- Save map file -->
     <task name="MapDirPrepro"/>          <!-- Pre-processing -->
+    <task name="MapSavePrepro"/>              <!-- Save map file after prepro -->
     <task name="ToG2O Forward"/>         <!-- Convert to G2O format -->
     <task name="BeforePGO Save"/>        <!-- Save G2O file before optimization -->
     <task name="PoseGraphOptimization"/> <!-- Pose-graph optimization by G2O -->

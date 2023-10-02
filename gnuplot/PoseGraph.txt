@@ -1,7 +1,10 @@
 OutputTerm = 3
 Mono = 0
 Env = "nc2021"
-Tag = "SPROX"
+#Tag = "SPROX"
+Tag = "SE2"
+#Tag = "Huber"
+#Tag = "GM"
 BaseName = (Env."_").Tag
 set encoding utf8
 angle = 120*pi/180
@@ -51,9 +54,9 @@ array proxClr[3] = ["#ff8080", "#c080c0", "#8080ff"]
 array geoClr[3] = ["#00c040", "#00ff00", "#40c000"]
 array locClr[3]  = ["#ff0000", "#ff00ff", "#0000ff"]
 
-plot for [i = 3:1:-1] sprintf("..\/data\/%s_%d_%s_absprox.csv", Env, i, Tag) every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb proxClr[i] notitle, \
-	for [i = 3:1:-1] sprintf("..\/data\/%s_%d_locgeo.csv", Env, i) every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb geoClr[i] title "Ground-truth", \
-	for [i = 3:1:-1] sprintf("..\/data\/%s_%d_%s_loc.csv", Env, i, Tag) every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb locClr[i] title "Pose-graph"
+plot for [i = 3:1:-1] sprintf("..\/data\/%s_%d_%s_absprox.csv", Env, i, Tag) every 3 using (X($3,$4)):(Y($3,$4)) with point ps 0.05 pt 7 lc rgb proxClr[i] notitle, \
+	for [i = 3:1:-1] sprintf("..\/data\/%s_%d_locgeo.csv", Env, i) every 1 using (X($3,$4)):(Y($3,$4)) with lines lw 3 lc rgb geoClr[i] notitle, \
+	for [i = 3:1:-1] sprintf("..\/data\/%s_%d_%s_loc.csv", Env, i, Tag) every 1 using (X($3,$4)):(Y($3,$4)) with lines lw 3 lc rgb locClr[i] notitle
 
 #plot for [i = 6:1:-1] sprintf("..\/data\/%s_1%d_%s_absprox.csv", Env, i, Tag) every :5 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb proxClr[i] notitle, \
 #	for [i = 6:1:-1] sprintf("..\/data\/%s_1%d_%s_loc.csv", Env, i, Tag) every 5 using (X($3,$4)):(Y($3,$4)) with lines lw 7 lc rgb locClr[i] notitle

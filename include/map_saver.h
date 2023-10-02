@@ -32,6 +32,7 @@ public:
 	virtual bool LocMatchSaver();               // For gnuplot execution
 	virtual bool AbsProxMatchSaver();           // For gnuplot execution
 	virtual bool SwitchVarSaver();
+	//virtual bool SwitchVarSortedSaver();
 	MapSaver(Scenebuilder::XMLNode* _setting, Maps* _maps, Matches* _matches, SparseOptimizer* _optimizer)
 		: TaskBase(_setting, _maps, _matches, _optimizer),
 		saveFile(), minSatNum(0), minQuality(0), OrigLLH(), AngOffset(0.), PosOffset() {};

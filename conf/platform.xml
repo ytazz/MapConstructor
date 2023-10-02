@@ -1,11 +1,11 @@
 <platform>
   <!-- Determine the configuration file to be used -->
 
-  <platform name = "nc2021"/>
   <!--
   <platform name = "geo_convert"/>
   <platform name = "nc2022"/>
-  <platform name = "ku2022"/>
   <platform name = "map_convert"/>
+  <platform name = "nc2021"/>
   -->
+  <platform name = "ku2022"/>
 </platform>

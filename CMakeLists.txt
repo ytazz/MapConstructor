@@ -26,7 +26,12 @@ if(UNIX)
 	set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 endif()
 
-find_package(Boost REQUIRED COMPONENTS thread)
+if(WIN32)
+	set(Boost_USE_STATIC_LIBS        ON)
+	set(Boost_USE_MULTITHREADED      ON)
+endif()
+find_package(Boost REQUIRED COMPONENTS thread timer)
+
 find_package(Eigen3 3.3 REQUIRED)
 find_package(GLUT)
 find_package(GLEW)
@@ -34,7 +39,7 @@ find_package(EXPAT)
 find_package(Springhead)
 find_package(Scenebuilder)
 find_package(g2o)
-
+find_package(SuiteSparse)
 find_library(EXPAT_LIBRARY
   NAMES expat
 )
@@ -94,6 +99,7 @@ add_executable(MapConstructor
   ${MAP_OPTIMIZER_SOURCES}
 )
  
+target_link_libraries(MapConstructor ${Boost_LIBRARIES})
 target_link_libraries(MapConstructor Springhead::Springhead)
 target_link_libraries(MapConstructor Scenebuilder)
 target_link_libraries(MapConstructor GLUT::GLUT)

@@ -1,10 +1,13 @@
 <nc2021>
   <!-- Load file settings -->
+  <!--
+  loadFormat = "Loc Prox Match PoseRef"
+  -->
   <MapLoader
     name = "MapLoad"
     mapNum = "3"
     delim = ","
-    loadFormat = "Loc Prox Match"
+    loadFormat = "Loc Prox Match PoseRef"
     MatchFile   = "../data/nc2021_match.csv"
     PoseRefFile = "../data/nc2021_SM_poseref.csv"
     >
@@ -46,7 +49,9 @@
       />
   </MapSaver>
 
-  <!-- Save file settings -->
+  <!-- Save file settings 
+      saveFormat = "Loc AbsProx LocMatch AbsProxMatch SwitchVar"
+  -->
   <MapSaver
     name = "MapSave"
     mapNum = "3"
@@ -54,7 +59,7 @@
     MatchFile        = "../data/nc2021_SPROX_match.csv"
     LocMatchFile     = "../data/nc2021_SPROX_locmatch.csv"
     AbsProxMatchFile = "../data/nc2021_SPROX_absproxmatch.csv"
-    SwitchVarFile    = "../data/nc2021_SPROX_switchvar.csv"
+    SwitchVarFile    = "../data/nc2021_SPROX_switchvar_sconst.csv"
     PoseRefFile      = "../data/nc2021_SM_poseref.csv"
     >
     <Map ID = "1"
@@ -76,6 +81,98 @@
       MovementFile = "../data/nc2021_3_movement.csv"
       />
   </MapSaver>
+  <!--
+  <MapSaver
+      name = "MapSave"
+      mapNum = "3"
+      saveFormat = "Loc AbsProx LocMatch AbsProxMatch"
+      MatchFile        = "../data/nc2021_SE2_match.csv"
+      LocMatchFile     = "../data/nc2021_SE2_locmatch.csv"
+      AbsProxMatchFile = "../data/nc2021_SE2_absproxmatch.csv"
+      PoseRefFile      = "../data/nc2021_SM_poseref.csv"
+    >
+    <Map ID = "1"
+      LocFile      = "../data/nc2021_1_SE2_loc.csv"
+      ProxFile     = "../data/nc2021_1_SE2_prox.csv"
+      AbsProxFile  = "../data/nc2021_1_SE2_absprox.csv"
+      MovementFile = "../data/nc2021_1_movement.csv"
+      />
+    <Map ID = "2"
+      LocFile      = "../data/nc2021_2_SE2_loc.csv"
+      ProxFile     = "../data/nc2021_2_SE2_prox.csv"
+      AbsProxFile  = "../data/nc2021_2_SE2_absprox.csv"
+      MovementFile = "../data/nc2021_2_movement.csv"
+      />
+    <Map ID = "3"
+      LocFile      = "../data/nc2021_3_SE2_loc.csv"
+      ProxFile     = "../data/nc2021_3_SE2_prox.csv"
+      AbsProxFile  = "../data/nc2021_3_SE2_absprox.csv"
+      MovementFile = "../data/nc2021_3_movement.csv"
+      />
+  </MapSaver>
+  -->
+  <!--
+  -->
+  <!--
+  <MapSaver
+    name = "MapSave"
+    mapNum = "3"
+    saveFormat = "Loc AbsProx LocMatch AbsProxMatch"
+    MatchFile        = "../data/nc2021_Huber_match.csv"
+    LocMatchFile     = "../data/nc2021_Huber_locmatch.csv"
+    AbsProxMatchFile = "../data/nc2021_Huber_absproxmatch.csv"
+    PoseRefFile      = "../data/nc2021_SM_poseref.csv"
+    >
+    <Map ID = "1"
+      LocFile      = "../data/nc2021_1_Huber_loc.csv"
+      ProxFile     = "../data/nc2021_1_Huber_prox.csv"
+      AbsProxFile  = "../data/nc2021_1_Huber_absprox.csv"
+      MovementFile = "../data/nc2021_1_movement.csv"
+      />
+    <Map ID = "2"
+      LocFile      = "../data/nc2021_2_Huber_loc.csv"
+      ProxFile     = "../data/nc2021_2_Huber_prox.csv"
+      AbsProxFile  = "../data/nc2021_2_Huber_absprox.csv"
+      MovementFile = "../data/nc2021_2_movement.csv"
+      />
+    <Map ID = "3"
+      LocFile      = "../data/nc2021_3_Huber_loc.csv"
+      ProxFile     = "../data/nc2021_3_Huber_prox.csv"
+      AbsProxFile  = "../data/nc2021_3_Huber_absprox.csv"
+      MovementFile = "../data/nc2021_3_movement.csv"
+      />
+  </MapSaver>
+  -->
+  <!--
+  <MapSaver
+    name = "MapSave"
+    mapNum = "3"
+    saveFormat = "Loc AbsProx LocMatch AbsProxMatch"
+    MatchFile        = "../data/nc2021_GM_match.csv"
+    LocMatchFile     = "../data/nc2021_GM_locmatch.csv"
+    AbsProxMatchFile = "../data/nc2021_GM_absproxmatch.csv"
+    PoseRefFile      = "../data/nc2021_SM_poseref.csv"
+    >
+    <Map ID = "1"
+      LocFile      = "../data/nc2021_1_GM_loc.csv"
+      ProxFile     = "../data/nc2021_1_GM_prox.csv"
+      AbsProxFile  = "../data/nc2021_1_GM_absprox.csv"
+      MovementFile = "../data/nc2021_1_movement.csv"
+      />
+    <Map ID = "2"
+      LocFile      = "../data/nc2021_2_GM_loc.csv"
+      ProxFile     = "../data/nc2021_2_GM_prox.csv"
+      AbsProxFile  = "../data/nc2021_2_GM_absprox.csv"
+      MovementFile = "../data/nc2021_2_movement.csv"
+      />
+    <Map ID = "3"
+      LocFile      = "../data/nc2021_3_GM_loc.csv"
+      ProxFile     = "../data/nc2021_3_GM_prox.csv"
+      AbsProxFile  = "../data/nc2021_3_GM_absprox.csv"
+      MovementFile = "../data/nc2021_3_movement.csv"
+      />
+  </MapSaver>
+  -->
 
   <!-- Save relative poses obtained by scan matching -->
   <MapSaver
@@ -119,41 +216,48 @@
     name = "ToG2O"
     >
     <Node Tag = "VERTEX_PROX"/>
-    <Odom Tag = "EDGE_SE2"
-      poseRef-InfoGain  = "30 30 0.3"
-      movement-InfoGain = "1 1 1"
-      infoLimit         = "10^8 10^8 10^3"
-      />
-    <Loop Tag = "EDGE_SWITCH_PROX"
-      proxSim-InfoGain = "-0.2"
-      switchInfo       = "0.20"
-      />
-  </ToG2OConverter>
-
-  <!--
-  <Loop Tag = "EDGE_M_Est_PROX"
-    proxSim-InfoGain = "-0.2"
-    robustKernel = "GemanMcClure"
-    robustKernelDelta = "1"
-      />
-      -->
-  
-  <!-- Convert map data to G2O data -->
-  <ToG2OConverter
-    name = "_ToG2O"
-    >
+    <!--
     <Node Tag = "VERTEX_SE2"/>
+    -->
     <Odom Tag = "EDGE_SE2"
-      poseRef-InfoGain  = "30 30 0.3"
-      movement-InfoGain = "1 1 1"
-      infoLimit         = "10^8 10^8 10^3"
+      poseRefInfoGain  = "30 30 0.003"
+      movementInfoGain = "1 1 1"
+      infoLimit        = "10 10 10"
+      rotScale         = "1.3"
       />
+    <!--
+      note:
+      proxSimInfoGain :  weight of prox-match constraint (Omega in paper)  if positive, proportional weight is used, if negative, constant weight
+      switchInfo      :  weight of switch variable (xi in paper)
+    -->
+    <Loop Tag = "EDGE_SWITCH_PROX"
+      proxSimInfoGain = "-0.0002"
+      switchInfo       = "0.0002"
+      />
+    <!--
+    -->
+      <!--
     <Loop Tag = "EDGE_SWITCH_SE2"
-      SE2InfoGain      = "0.01"
-      switchInfo       = "1"
+      SE2InfoGain      = "0.0001"
+      switchInfo       = "0.01"
       />
+    -->
+    <!--
+    <Loop Tag = "EDGE_M_Est_PROX"
+      proxSimInfoGain = "-0.0002"
+      robustKernel = "GemanMcClure"
+      robustKernelDelta = "1"
+      />
+    -->
+    <!--
+    <Loop Tag = "EDGE_M_Est_PROX"
+      proxSimInfoGain = "-0.0002"
+      robustKernel = "Huber"
+      robustKernelDelta = "1"
+      />
+    -->
   </ToG2OConverter>
-
+  
   <ProxMatcher
     name     = "ProxMatcher"
     clacSimEqMethod = "LDLT"

@@ -1,0 +1,112 @@
+set encoding utf8
+
+set term svg size 600, 600
+
+set xlabel 'x [m]'
+set ylabel 'y [m]'
+set xlabel font "Arial, 20"
+set ylabel font "Arial, 20"
+
+angle = 0*pi/180
+X(x,y) = (x*cos(angle)-y*sin(angle))
+Y(x,y) = (x*sin(angle)+y*cos(angle))
+
+set size ratio -1
+set xtics 40
+set ytics 40
+set tics font "Arial,20"
+
+set key font "Arial,12"
+
+set nozlabel
+unset ztics
+set ticslevel 0
+
+set view equal xy
+set view 60, 45, 1.2, 0.6
+
+set xrange [-80:140]
+set yrange [-200:120]
+
+#plot "../data/ku2022_absproxmatch.csv" every  1 using (X($4,$5)):(Y($4,$5)) with lines lw 0.1 lc rgb "#db8686" notitle, \
+
+set output "fig/ku2022_before_3D.svg"
+plot "../data/ku2022_11_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#6365c9" notitle, \
+     "../data/ku2022_12_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#5aba6f" notitle, \
+     "../data/ku2022_13_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#d970c9" notitle, \
+     "../data/ku2022_14_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#73dacc" notitle, \
+     "../data/ku2022_15_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#dcb150" notitle, \
+     "../data/ku2022_16_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#c95b5f" notitle, \
+     "../data/ku2022_11_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#2f32a3" title "KU-A", \
+     "../data/ku2022_12_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#247636" title "KU-B", \
+     "../data/ku2022_13_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#912380" title "KU-C", \
+     "../data/ku2022_14_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#1da290" title "KU-D", \
+     "../data/ku2022_15_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#a77c1c" title "KU-E", \
+     "../data/ku2022_16_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#98282e" title "KU-F"
+
+#plot "../data/ku2022_SPROX_prepro_absproxmatch.csv" every  1 using (X($4,$5)):(Y($4,$5)) with lines lw 0.1 lc rgb "#db8686" notitle, \
+
+set output "fig/ku2022_SPROX_prepro_3D.svg"
+plot "../data/ku2022_11_SPROX_prepro_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#6365c9" notitle, \
+     "../data/ku2022_12_SPROX_prepro_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#5aba6f" notitle, \
+     "../data/ku2022_13_SPROX_prepro_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#d970c9" notitle, \
+     "../data/ku2022_14_SPROX_prepro_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#73dacc" notitle, \
+     "../data/ku2022_15_SPROX_prepro_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#dcb150" notitle, \
+     "../data/ku2022_16_SPROX_prepro_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#c95b5f" notitle, \
+     "../data/ku2022_11_SPROX_prepro_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#2f32a3" title "KU-A", \
+     "../data/ku2022_12_SPROX_prepro_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#247636" title "KU-B", \
+     "../data/ku2022_13_SPROX_prepro_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#912380" title "KU-C", \
+     "../data/ku2022_14_SPROX_prepro_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#1da290" title "KU-D", \
+     "../data/ku2022_15_SPROX_prepro_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#a77c1c" title "KU-E", \
+     "../data/ku2022_16_SPROX_prepro_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#98282e" title "KU-F"
+
+set xrange [-40:140]
+set yrange [-180:20]
+
+set output "fig/ku2022_SPROX_3D.svg"
+plot "../data/ku2022_SPROX_absproxmatch.csv" every  1 using (X($4,$5)):(Y($4,$5)) with lines lw 0.2 lc rgb "#db8686" notitle, \
+     "../data/ku2022_11_SPROX_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#6365c9" notitle, \
+     "../data/ku2022_12_SPROX_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#5aba6f" notitle, \
+     "../data/ku2022_13_SPROX_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#d970c9" notitle, \
+     "../data/ku2022_14_SPROX_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#73dacc" notitle, \
+     "../data/ku2022_15_SPROX_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#dcb150" notitle, \
+     "../data/ku2022_16_SPROX_absprox.csv"    every  5 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#c95b5f" notitle, \
+     "../data/ku2022_11_SPROX_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#2f32a3" title "KU-A", \
+     "../data/ku2022_12_SPROX_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#247636" title "KU-B", \
+     "../data/ku2022_13_SPROX_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#912380" title "KU-C", \
+     "../data/ku2022_14_SPROX_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#1da290" title "KU-D", \
+     "../data/ku2022_15_SPROX_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#a77c1c" title "KU-E", \
+     "../data/ku2022_16_SPROX_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#98282e" title "KU-F"
+
+set xrange [-6:3]
+set yrange [0:250]
+set xlabel "log error"
+set ylabel "frequency"
+set xtics 1
+set ytics 250
+set size ratio 0.25
+set boxwidth 0.3 relative
+set style fill solid
+set key font "Arial,15"
+
+
+set output "fig/ku2022_SPROX_histogram_error.svg"
+binwidth = 0.05
+bin(val) = binwidth * floor(0.5 + log(val) / binwidth)
+plot "../data/ku2022_SPROX_switchvar.csv"        using (bin($9)-binwidth*0.3/2):(1) smooth frequency with boxes lw 0 lc rgb "blue" title "robust", \
+     "../data/ku2022_SPROX_switchvar_sconst.csv" using (bin($9)+binwidth*0.3/2):(1) smooth frequency with boxes lw 0 lc rgb "orange" title "non-robust"
+
+set xrange [0:1]
+set yrange [0:1000]
+set xlabel "value"
+set ylabel "frequency"
+set xtics 0.1
+set ytics 500
+set size ratio 0.25
+set boxwidth 0.75 relative
+set style fill solid
+set output "fig/ku2022_SPROX_histogram_switch.svg"
+binwidth = 0.005
+bin2(val) = binwidth * floor(0.5 + val / binwidth)
+plot "../data/ku2022_SPROX_switchvar.csv"        using (bin2($10)):(1) smooth frequency with boxes lw 0 lc rgb "blue" notitle
+

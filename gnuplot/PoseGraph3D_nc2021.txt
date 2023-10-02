@@ -1,0 +1,146 @@
+set encoding utf8
+
+set term svg size 500, 500
+
+set xlabel 'x [m]'
+set ylabel 'y [m]'
+set xlabel font "Arial, 20"
+set ylabel font "Arial, 20"
+
+angle = 120*pi/180
+X(x,y) = (x*cos(angle)-y*sin(angle))
+Y(x,y) = (x*sin(angle)+y*cos(angle))
+
+set view equal xy
+set view 0, 0, 1, 1
+
+set xtics 50
+set ytics 50
+set xtics font "Arial,20"
+set ytics font "Arial,20"
+
+set key font "Arial,16"
+
+set xrange [-110:150]
+set yrange [-220:50]
+
+set output "fig/nc2021_before_3D.svg"
+plot "../data/nc2021_absproxmatch.csv" every  1 using (X($4,$5)):(Y($4,$5)) with lines lw 0.2 lc rgb "#db8686" notitle, \
+     "../data/nc2021_1_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#6365c9" notitle, \
+     "../data/nc2021_2_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#5aba6f" notitle, \
+     "../data/nc2021_3_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#d970c9" notitle, \
+     "../data/nc2021_1_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#2f32a3" title "NC2021-A", \
+     "../data/nc2021_2_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#247636" title "NC2021-B", \
+     "../data/nc2021_3_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#912380" title "NC2021-C"
+
+set xrange [-75:150]
+set yrange [-150:50]
+
+set output "fig/nc2021_SPROX_3D.svg"
+plot "../data/nc2021_SPROX_absproxmatch.csv" every  1 using (X($4,$5)):(Y($4,$5)) with lines lw 0.2 lc rgb "#db8686" notitle, \
+     "../data/nc2021_1_SPROX_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#6365c9" notitle, \
+     "../data/nc2021_2_SPROX_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#5aba6f" notitle, \
+     "../data/nc2021_3_SPROX_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.2 pt 7 lc rgb "#d970c9" notitle, \
+     "../data/nc2021_1_SPROX_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#2f32a3" title "NC2021-A", \
+     "../data/nc2021_2_SPROX_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#247636" title "NC2021-B", \
+     "../data/nc2021_3_SPROX_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#912380" title "NC2021-C"
+
+set output "fig/nc2021_SE2_3D.svg"
+plot "../data/nc2021_SE2_absproxmatch.csv" every  1 using (X($4,$5)):(Y($4,$5)) with lines lw 0.1 lc rgb "#db8686" notitle, \
+     "../data/nc2021_1_SE2_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.1 pt 7 lc rgb "#6365c9" notitle, \
+     "../data/nc2021_2_SE2_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.1 pt 7 lc rgb "#5aba6f" notitle, \
+     "../data/nc2021_3_SE2_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.1 pt 7 lc rgb "#d970c9" notitle, \
+     "../data/nc2021_1_SE2_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#2f32a3" notitle, \
+     "../data/nc2021_2_SE2_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#247636" notitle, \
+     "../data/nc2021_3_SE2_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#912380" notitle
+
+set output "fig/nc2021_Huber_3D.svg"
+plot "../data/nc2021_Huber_absproxmatch.csv" every  1 using (X($4,$5)):(Y($4,$5)) with lines lw 0.1 lc rgb "#db8686" notitle, \
+     "../data/nc2021_1_Huber_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.1 pt 7 lc rgb "#6365c9" notitle, \
+     "../data/nc2021_2_Huber_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.1 pt 7 lc rgb "#5aba6f" notitle, \
+     "../data/nc2021_3_Huber_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.1 pt 7 lc rgb "#d970c9" notitle, \
+     "../data/nc2021_1_Huber_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#2f32a3" notitle, \
+     "../data/nc2021_2_Huber_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#247636" notitle, \
+     "../data/nc2021_3_Huber_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#912380" notitle
+
+set output "fig/nc2021_GM_3D.svg"
+plot "../data/nc2021_GM_absproxmatch.csv" every  1 using (X($4,$5)):(Y($4,$5)) with lines lw 0.1 lc rgb "#db8686" notitle, \
+     "../data/nc2021_1_GM_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.1 pt 7 lc rgb "#6365c9" notitle, \
+     "../data/nc2021_2_GM_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.1 pt 7 lc rgb "#5aba6f" notitle, \
+     "../data/nc2021_3_GM_absprox.csv"    every 10 using (X($3,$4)):(Y($3,$4)) with point ps 0.1 pt 7 lc rgb "#d970c9" notitle, \
+     "../data/nc2021_1_GM_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#2f32a3" notitle, \
+     "../data/nc2021_2_GM_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#247636" notitle, \
+     "../data/nc2021_3_GM_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#912380" notitle
+
+set xtics 10
+set ytics 10
+set xrange [70:110]
+set yrange [-40:0]
+
+set output "fig/nc2021_SE2_zoom.svg"
+plot "../data/nc2021_1_SE2_absprox.csv"    every  1 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#6365c9" notitle, \
+     "../data/nc2021_2_SE2_absprox.csv"    every  1 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#5aba6f" notitle, \
+     "../data/nc2021_3_SE2_absprox.csv"    every  1 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#d970c9" notitle, \
+     "../data/nc2021_1_SE2_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#2f32a3" title "NC2021-A", \
+     "../data/nc2021_2_SE2_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#247636" title "NC2021-B", \
+     "../data/nc2021_3_SE2_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#912380" title "NC2021-C"
+
+set output "fig/nc2021_SPROX_zoom.svg"
+plot "../data/nc2021_SPROX_absproxmatch.csv" every  1 using (X($4,$5)):(Y($4,$5)) with lines lw 0.3 lc rgb "#db8686" notitle, \
+     "../data/nc2021_1_SPROX_absprox.csv"    every  1 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#6365c9" notitle, \
+     "../data/nc2021_2_SPROX_absprox.csv"    every  1 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#5aba6f" notitle, \
+     "../data/nc2021_3_SPROX_absprox.csv"    every  1 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#d970c9" notitle, \
+     "../data/nc2021_1_SPROX_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#2f32a3" title "NC2021-A", \
+     "../data/nc2021_2_SPROX_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#247636" title "NC2021-B", \
+     "../data/nc2021_3_SPROX_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#912380" title "NC2021-C"
+
+set output "fig/nc2021_Huber_zoom.svg"
+plot "../data/nc2021_Huber_absproxmatch.csv" every  1 using (X($4,$5)):(Y($4,$5)) with lines lw 0.3 lc rgb "#db8686" notitle, \
+     "../data/nc2021_1_Huber_absprox.csv"    every  1 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#6365c9" notitle, \
+     "../data/nc2021_2_Huber_absprox.csv"    every  1 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#5aba6f" notitle, \
+     "../data/nc2021_3_Huber_absprox.csv"    every  1 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#d970c9" notitle, \
+     "../data/nc2021_1_Huber_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#2f32a3" title "NC2021-A", \
+     "../data/nc2021_2_Huber_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#247636" title "NC2021-B", \
+     "../data/nc2021_3_Huber_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#912380" title "NC2021-C"
+
+set output "fig/nc2021_GM_zoom.svg"
+plot "../data/nc2021_GM_absproxmatch.csv" every  1 using (X($4,$5)):(Y($4,$5)) with lines lw 0.3 lc rgb "#db8686" notitle, \
+     "../data/nc2021_1_GM_absprox.csv"    every  1 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#6365c9" notitle, \
+     "../data/nc2021_2_GM_absprox.csv"    every  1 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#5aba6f" notitle, \
+     "../data/nc2021_3_GM_absprox.csv"    every  1 using (X($3,$4)):(Y($3,$4)) with point ps 0.3 pt 7 lc rgb "#d970c9" notitle, \
+     "../data/nc2021_1_GM_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#2f32a3" title "NC2021-A", \
+     "../data/nc2021_2_GM_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#247636" title "NC2021-B", \
+     "../data/nc2021_3_GM_loc.csv"        every  5 using (X($3,$4)):(Y($3,$4)) with lines lw 2        lc rgb "#912380" title "NC2021-C"
+
+set xrange [-6:3]
+set yrange [0:250]
+set xlabel "log error"
+set ylabel "frequency"
+set xtics 1
+set ytics 250
+set size ratio 0.25
+set boxwidth 0.3 relative
+set style fill solid
+set key font "Arial,15"
+
+set term svg size 600, 600
+
+set output "fig/nc2021_SPROX_histogram_error.svg"
+binwidth = 0.05
+bin(val) = binwidth * floor(0.5 + log(val) / binwidth)
+plot "../data/nc2021_SPROX_switchvar.csv"        using (bin($9)-binwidth*0.3/2):(1) smooth frequency with boxes lw 0 lc rgb "blue" title "robust", \
+     "../data/nc2021_SPROX_switchvar_sconst.csv" using (bin($9)+binwidth*0.3/2):(1) smooth frequency with boxes lw 0 lc rgb "orange" title "non-robust"
+
+set xrange [0:1]
+set yrange [0:1000]
+set xlabel "value"
+set ylabel "frequency"
+set xtics 0.1
+set ytics 500
+set size ratio 0.25
+set boxwidth 0.75 relative
+set style fill solid
+set output "fig/nc2021_SPROX_histogram_switch.svg"
+binwidth = 0.005
+bin2(val) = binwidth * floor(0.5 + val / binwidth)
+plot "../data/nc2021_SPROX_switchvar.csv"        using (bin2($10)):(1) smooth frequency with boxes lw 0 lc rgb "blue" notitle

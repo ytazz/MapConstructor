@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include <boost/timer.hpp>
+#include <boost/timer/timer.hpp>
 
 #include "sbxml.h"
 #define XML_STATIC
