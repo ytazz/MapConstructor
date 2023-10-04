@@ -235,16 +235,26 @@ bool MapLoader::PointCloudLoader(const string filename, const int mapID) {
 }
 
 bool MapLoader::MatchLoader() {
+	// submap0, count0, time0, submap1, count1, time1, index, size, score, reverse, [prox0, prox1, sim0, sim1] ...
 	for (int r = 0; r < loadFile.NumRow(); r++) {
-		// count0, time0, id0, count1, time1, id1
-		const int mapID[2] = { loadFile.Get<int>(r, 0), loadFile.Get<int   >(r, 3) };
-		const int count[2] = { loadFile.Get<int>(r, 1), loadFile.Get<int   >(r, 4) };
-		const int time[2] = { loadFile.Get<int>(r, 2), loadFile.Get<int   >(r, 5) };
-		const int index = loadFile.Get<int>(r, 6);
-		const int size = loadFile.Get<int>(r, 7);
-		const real_t score = loadFile.Get<real_t>(r, 8);
-		const bool reverse = loadFile.Get<bool>(r, 9);
-		const int num_pm = loadFile.Get<int>(r, 10);
+        int ncol = loadFile.NumCol(r);
+        if(ncol < 10)
+            continue;
+
+        int c = 0;
+
+		int mapID[2] = { loadFile.Get<int>(r, c+0), loadFile.Get<int   >(r, c+3) };
+		int count[2] = { loadFile.Get<int>(r, c+1), loadFile.Get<int   >(r, c+4) };
+		int time[2]  = { loadFile.Get<int>(r, c+2), loadFile.Get<int   >(r, c+5) };
+		int index    = loadFile.Get<int>   (r, c+6);
+		int size     = loadFile.Get<int>   (r, c+7);
+		real_t score = loadFile.Get<real_t>(r, c+8);
+		bool reverse = loadFile.Get<bool>  (r, c+9);
+		
+        c = 10;
+
+        //const int num_pm = loadFile.Get<int>(r, 10);
+        int num_pm = (ncol - c)/4;
 
 		// Find 2 maps with 2 mapIDs registered (if not, don't register match data)
 		Map* fmap = maps->FindById(mapID[0]);
@@ -276,8 +286,8 @@ bool MapLoader::MatchLoader() {
 		}
 
 		for (int k = 0; k < num_pm; k++) {
-			const int proxId[2] = { loadFile.Get<int>(r, 11 + 4 * k), loadFile.Get<int>(r, 12 + 4 * k) };
-			const real_t sim[2] = { loadFile.Get<real_t>(r, 13 + 4 * k), loadFile.Get<real_t>(r, 14 + 4 * k) };
+			const int proxId[2] = { loadFile.Get<int>   (r, c + 4*k + 0), loadFile.Get<int>   (r, c + 4*k + 1) };
+			const real_t sim[2] = { loadFile.Get<real_t>(r, c + 4*k + 2), loadFile.Get<real_t>(r, c + 4*k + 3) };
 
 			// Find 2 proxs with 2 Ids registered (if not, don't register prox pair)
 			Prox* fprox = fnode->proximities.FindById(proxId[0]);
@@ -397,6 +407,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 				MapSetting->Get<string>(filename, ".LocFile");
 				if (filename != "") {
 					cout << form << " ";
+                    loadFile.Clear();
 					loadFile.Read(filename, delim);
 					LocLoader(i + 1);
 				}
@@ -409,6 +420,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 				MapSetting->Get<string>(filename, ".MovementFile");
 				if (filename != "") {
 					cout << form << " ";
+                    loadFile.Clear();
 					loadFile.Read(filename, delim);
 					MovementLoader(i + 1);
 				}
@@ -421,6 +433,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 				MapSetting->Get<string>(filename, ".ProxFile");
 				if (filename != "") {
 					cout << form << " ";
+                    loadFile.Clear();
 					loadFile.Read(filename, delim);
 					ProxLoader(i + 1);
 				}
@@ -433,6 +446,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 				MapSetting->Get<string>(filename, ".GeoFile");
 				if (filename != "") {
 					cout << form << " ";
+                    loadFile.Clear();
 					loadFile.Read(filename, delim);
 					GeoLoader(i + 1);
 				}
@@ -461,6 +475,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 			setting->Get<string>(filename, ".MatchFile");
 			if (filename != "") {
 				cout << form << " ";
+                loadFile.Clear();
 				loadFile.Read(filename, delim);
 				MatchLoader();
 			}
@@ -473,6 +488,7 @@ int MapLoader::Task(int argc, const char* argv[]) {
 			setting->Get<string>(filename, ".PoseRefFile");
 			if (filename != "") {
 				cout << form << " ";
+                loadFile.Clear();
 				loadFile.Read(filename, delim);
 				PoseRefLoader();
 			}

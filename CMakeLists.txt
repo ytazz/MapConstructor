@@ -85,6 +85,7 @@ set(MAP_OPTIMIZER_CONFIGS
   "conf/nc2021.xml"
   "conf/nc2022.xml"
   "conf/ku2022.xml"
+  "conf/ku2023.xml"
   "conf/geo_convert.xml"
   "conf/map_convert.xml"
 )
