@@ -5,9 +5,9 @@
     mapNum = "1"
     delim = ","
     loadFormat = "Loc Prox Match"
-    MatchFile              = "../data/ku2023/ku2023_1114_loop.csv" >
-    <Map ID = "1" LocFile  = "../data/ku2023/ku2023_1114_loc.csv"
-                  ProxFile = "../data/ku2023/ku2023_1114_prox.csv" />
+    MatchFile              = "../data/nc2023/nc2023ex_loop.csv" >
+    <Map ID = "1" LocFile  = "../data/nc2023/nc2023ex_loc.csv"
+                  ProxFile = "../data/nc2023/nc2023ex_prox.csv" />
   </MapLoader>
 
   <!-- Save file settings -->
@@ -15,52 +15,52 @@
     name = "MapSave_"
     mapNum = "1"
     saveFormat = "Loc AbsProx LocMatch AbsProxMatch"
-    LocMatchFile              = "../data/ku2023/locmatch.csv"
-    AbsProxMatchFile          = "../data/ku2023/absproxmatch.csv" >
-    <Map ID = "1" AbsProxFile = "../data/ku2023/absprox.csv" />
+    LocMatchFile              = "../data/nc2023/locmatch.csv"
+    AbsProxMatchFile          = "../data/nc2023/absproxmatch.csv" >
+    <Map ID = "1" AbsProxFile = "../data/nc2023/absprox.csv" />
   </MapSaver>
 
   <MapSaver
     name = "MapSavePrepro"
     mapNum = "1"
     saveFormat = "Loc AbsProx LocMatch AbsProxMatch"
-    LocMatchFile              = "../data/ku2023/SPROX_prepro_locmatch.csv"
-    AbsProxMatchFile          = "../data/ku2023/SPROX_prepro_absproxmatch.csv" >
-    <Map ID = "1" LocFile     = "../data/ku2023/SPROX_prepro_loc.csv"
-                  ProxFile    = "../data/ku2023/SPROX_prepro_prox.csv"
-                  AbsProxFile = "../data/ku2023/SPROX_prepro_absprox.csv" />
+    LocMatchFile              = "../data/nc2023/SPROX_prepro_locmatch.csv"
+    AbsProxMatchFile          = "../data/nc2023/SPROX_prepro_absproxmatch.csv" >
+    <Map ID = "1" LocFile     = "../data/nc2023/SPROX_prepro_loc.csv"
+                  ProxFile    = "../data/nc2023/SPROX_prepro_prox.csv"
+                  AbsProxFile = "../data/nc2023/SPROX_prepro_absprox.csv" />
   </MapSaver>
 
   <MapSaver
     name = "MapSave"
     mapNum = "1"
     saveFormat = "Loc AbsProx LocMatch AbsProxMatch SwitchVar"
-    LocMatchFile     = "../data/ku2023/SPROX_locmatch.csv"
-    AbsProxMatchFile = "../data/ku2023/SPROX_absproxmatch.csv"
-    SwitchVarFile    = "../data/ku2023/SPROX_switchvar_sconst.csv" 
+    LocMatchFile     = "../data/nc2023/SPROX_locmatch.csv"
+    AbsProxMatchFile = "../data/nc2023/SPROX_absproxmatch.csv"
+    SwitchVarFile    = "../data/nc2023/SPROX_switchvar_sconst.csv" 
     >
-    <Map ID = "1" LocFile     = "../data/ku2023/SPROX_loc.csv"
-                  ProxFile    = "../data/ku2023/SPROX_prox.csv"
-                  AbsProxFile = "../data/ku2023/SPROX_absprox.csv" />
+    <Map ID = "1" LocFile     = "../data/nc2023/SPROX_loc.csv"
+                  ProxFile    = "../data/nc2023/SPROX_prox.csv"
+                  AbsProxFile = "../data/nc2023/SPROX_absprox.csv" />
   </MapSaver>
 
   <!-- G2O file Load & Save file name -->
   <G2OFileIO
     name = "PoseGraph"
-    LoadFileName = "../data/ku2023/before.g2o"
-    SaveFileName = "../data/ku2023/after_SPROX.g2o"
+    LoadFileName = "../data/nc2023/before.g2o"
+    SaveFileName = "../data/nc2023/after_SPROX.g2o"
     />
 
   <!-- G2O file Save file name  Before optimization -->
   <G2OFileIO
     name = "BeforePGO"
-    SaveFileName = "../data/ku2023/before.g2o"
+    SaveFileName = "../data/nc2023/before.g2o"
     />
 
   <!-- G2O file Save file name  After optimization -->
   <G2OFileIO
     name = "AfterPGO"
-    SaveFileName = "../data/ku2023/after_SPROX.g2o"
+    SaveFileName = "../data/nc2023/after_SPROX.g2o"
     />
 
   <!-- Pose-Graph Optimization by G2O -->
